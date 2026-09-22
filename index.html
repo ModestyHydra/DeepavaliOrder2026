@@ -442,7 +442,6 @@
                 }
             }
 
-            // Update ONLY the specific quantity span instantly without re-rendering images (prevents flickering)
             const qtySpan = document.getElementById(`product-qty-${productId}`);
             if (qtySpan) {
                 qtySpan.innerText = newQty;
@@ -525,8 +524,12 @@
             const sortOption = document.getElementById('order-sort-select') ? document.getElementById('order-sort-select').value : 'newest';
             
             let sortedOrders = [...orders].sort((a, b) => {
-                let timeA = a.timestamp || new Date(a.date).getTime() || 0;
-                let timeB = b.timestamp || new Date(b.date).getTime() || 0;
+                let timeA = Number(a.timestamp) || new Date(a.date).getTime();
+                let timeB = Number(b.timestamp) || new Date(b.date).getTime();
+                
+                if (isNaN(timeA)) timeA = 0;
+                if (isNaN(timeB)) timeB = 0;
+
                 if (sortOption === 'oldest') {
                     return timeA - timeB; // Oldest to Newest (0-9)
                 } else {
