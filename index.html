@@ -9,12 +9,7 @@
 </head>
 <body id="body-bg" class="bg-amber-50 text-gray-800 transition-colors duration-300 min-h-screen">
 
-    <!-- Floating Sticky Mini Logo (Appears when scrolling down) -->
-    <div id="floating-logo" class="fixed top-3 left-3 z-50 hidden transition-all duration-300">
-        <img id="floating-logo-img" src="" alt="Mini Logo" class="w-10 h-10 object-cover rounded-full border-2 border-white shadow-lg">
-    </div>
-
-    <!-- Slim & Compact Header (Scrolls naturally with page) -->
+    <!-- Slim & Compact Header (Scrolls naturally, NOT fixed) -->
     <header id="header-container" class="bg-amber-700 bg-cover bg-center py-2 px-4 shadow-md z-40 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center">
         
         <!-- Top Utility Bar: Admin & Cart Buttons -->
@@ -196,16 +191,6 @@
             { id: "4", name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
         ];
 
-        // Scroll listener to toggle floating corner logo
-        window.addEventListener('scroll', () => {
-            const floatingLogo = document.getElementById('floating-logo');
-            if (window.scrollY > 120 && currentSettings.logo) {
-                floatingLogo.classList.remove('hidden');
-            } else {
-                floatingLogo.classList.add('hidden');
-            }
-        });
-
         window.switchAdminTab = function(tabName) {
             document.getElementById('admin-tab-inventory').classList.add('hidden');
             document.getElementById('admin-tab-orders').classList.add('hidden');
@@ -270,14 +255,11 @@
             }
 
             const logoEl = document.getElementById('header-logo');
-            const floatingLogoImg = document.getElementById('floating-logo-img');
             if (data.logo) {
                 logoEl.src = data.logo;
                 logoEl.classList.remove('hidden');
-                floatingLogoImg.src = data.logo;
             } else {
                 logoEl.classList.add('hidden');
-                document.getElementById('floating-logo').classList.add('hidden');
             }
 
             const headerContainer = document.getElementById('header-container');
