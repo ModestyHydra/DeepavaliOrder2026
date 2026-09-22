@@ -1013,7 +1013,7 @@
     <!-- Firebase SDKs & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDgcBDdJaGkEBS1ihJASDAayNHWgrJ-UN8",
@@ -1052,8 +1052,8 @@
         // GLOBAL APP STATE
         let products = [];
         let orders = [];
+        let staffAccounts = [];
         let notifications = JSON.parse(localStorage.getItem('kk_notifs')) || [];
-        let staffAccounts = JSON.parse(localStorage.getItem('kk_staff')) || [];
         let storeSettings = JSON.parse(localStorage.getItem('kk_store_settings')) || {
             title: "KK HOMEMADE BISCUITS",
             subtitle: "DELICIOUS FESTIVE TREATS",
@@ -1072,24 +1072,32 @@
         window.addEventListener('DOMContentLoaded', () => {
             applyStoreSettings();
 
-            // Realtime Products Listener
+            // 1. Realtime Products Listener
             onSnapshot(collection(db, "products"), async (snapshot) => {
                 if (snapshot.empty) {
                     for (let p of defaultProducts) {
                         await setDoc(doc(db, "products", p.id), p);
                     }
                 } else {
-                    products = snapshot.docs.map(doc => ({ ...doc.data() }));
+                    products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     checkAndGenerateStockAlerts();
                     renderCustomerMenu(document.getElementById('search-input')?.value || "");
                     if (currentRole === 'seller') renderSellerStockList();
                 }
             });
 
-            // Realtime Orders Listener
+            // 2. Realtime Orders Listener
             onSnapshot(collection(db, "orders"), (snapshot) => {
                 orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
                 if (currentRole === 'seller') renderSellerOrdersList();
+            });
+
+            // 3. Realtime Staff Accounts Listener (Fixes multi-device staff login issue)
+            onSnapshot(collection(db, "staff"), (snapshot) => {
+                staffAccounts = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+                if (currentRole === 'seller' && currentUser && currentUser.isOwner) {
+                    renderStaffList();
+                }
             });
 
             if (currentUser) {
@@ -1280,7 +1288,7 @@
             document.getElementById('cart-total').innerText = `RM ${totalPrice}`;
         }
 
-        // SAFE CONCURRENT WHATSAPP ORDER (TRANSACTION-SAFE STOCK DEDUCTION)
+        // SECURE WHATSAPP ORDER & REALTIME TRANSACTION
         window.sendWhatsAppOrder = async function() {
             const custNameInput = document.getElementById('customer-short-name');
             const custName = custNameInput.value.trim();
@@ -1297,7 +1305,6 @@
                 return;
             }
 
-            // TRIGGER WHATSAPP POPUP IMMEDIATELY TO AVOID MOBILE POPUP BLOCKERS
             const now = new Date();
             const orderDate = now.toLocaleDateString();
             const orderTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -1333,11 +1340,11 @@
             whatsappText += `TOTAL AMOUNT: RM ${total.toFixed(2)}\n`;
             whatsappText += `------------------------------------`;
 
-            // Open WhatsApp right away with exact number 601126862303
+            // Open WhatsApp immediately
             const encoded = encodeURIComponent(whatsappText);
             window.open(`https://wa.me/601126862303?text=${encoded}`, '_blank');
 
-            // SECURE REAL-TIME TRANSACTION FOR CONCURRENT STOCK DEDUCTION IN FIREBASE
+            // TRANSACTION SAFELY DEDUCT STOCK & SAVE ORDER IN FIREBASE
             try {
                 for (let [id, qty] of entries) {
                     const productRef = doc(db, "products", String(id));
@@ -1355,7 +1362,6 @@
                     });
                 }
 
-                // Save order record to Firebase database
                 const orderRecord = {
                     id: Date.now(),
                     customerName: custName,
@@ -1373,8 +1379,8 @@
                 updateCartSummary();
                 renderCustomerMenu();
             } catch (err) {
-                console.error("Stock deduction transaction failed: ", err);
-                alert("Order placed via WhatsApp, but some stock counts might have updated concurrently. Please check inventory.");
+                console.error("Stock transaction failed: ", err);
+                alert("Order opened in WhatsApp, but stock adjustment encountered a conflict. Please double-check inventory counts.");
             }
         };
 
@@ -1403,26 +1409,27 @@
 
             if (id === 'Yuga' && pass === '1234') {
                 currentUser = { id: 'Yuga', isOwner: true, perms: { editProd: true, manageStock: true, manageOrders: true } };
+                finishLogin(remember);
             } else {
                 const staff = staffAccounts.find(s => s.id === id && s.pass === pass);
                 if (staff) {
                     currentUser = { id: staff.id, isOwner: false, perms: staff.perms };
+                    finishLogin(remember);
                 } else {
                     alert('Invalid ID or Password! Please try again.');
-                    return;
                 }
             }
+        };
 
+        function finishLogin(remember) {
             if (remember) {
                 localStorage.setItem('kk_session', JSON.stringify(currentUser));
             }
-
             closeLoginModal();
             document.getElementById('login-id').value = '';
             document.getElementById('login-pass').value = '';
-
             applySellerSessionView();
-        };
+        }
 
         function applySellerSessionView() {
             currentRole = 'seller';
@@ -1622,7 +1629,6 @@
                 }
 
                 if (id) {
-                    const prod = products.find(p => String(p.id) === String(id));
                     const updatedData = {
                         name: name,
                         price: price,
@@ -1722,7 +1728,7 @@
             }
         };
 
-        // STAFF MANAGEMENT
+        // STAFF MANAGEMENT (SYNCED VIA FIREBASE)
         function renderStaffList() {
             const container = document.getElementById('staff-list');
             if (!container) return;
@@ -1733,7 +1739,7 @@
                 return;
             }
 
-            staffAccounts.forEach((st, index) => {
+            staffAccounts.forEach((st) => {
                 const card = document.createElement('div');
                 card.style = "background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
                 card.innerHTML = `
@@ -1743,7 +1749,7 @@
                             Edit Prod: ${st.perms.editProd ? '✓' : '✗'} | Stock: ${st.perms.manageStock ? '✓' : '✗'} | Orders: ${st.perms.manageOrders ? '✓' : '✗'}
                         </div>
                     </div>
-                    <button class="action-icon-btn delete" onclick="deleteStaff(${index})"><i class="fas fa-trash"></i></button>
+                    <button class="action-icon-btn delete" onclick="deleteStaff('${st.docId}')"><i class="fas fa-trash"></i></button>
                 `;
                 container.appendChild(card);
             });
@@ -1752,7 +1758,7 @@
         window.openAddStaffModal = function() { document.getElementById('staff-modal').classList.remove('hidden'); };
         window.closeAddStaffModal = function() { document.getElementById('staff-modal').classList.add('hidden'); };
 
-        window.saveNewStaff = function() {
+        window.saveNewStaff = async function() {
             const id = document.getElementById('staff-new-id').value.trim();
             const pass = document.getElementById('staff-new-pass').value.trim();
 
@@ -1768,18 +1774,20 @@
                 }
             };
 
-            staffAccounts.push(newStaff);
-            localStorage.setItem('kk_staff', JSON.stringify(staffAccounts));
-            closeAddStaffModal();
-            renderStaffList();
-            alert(`Staff Account '${id}' created successfully!`);
+            try {
+                await addDoc(collection(db, "staff"), newStaff);
+                closeAddStaffModal();
+                document.getElementById('staff-new-id').value = "";
+                document.getElementById('staff-new-pass').value = "";
+                alert(`Staff Account '${id}' created successfully and synced across devices!`);
+            } catch (err) {
+                alert("Error creating staff account: " + err.message);
+            }
         };
 
-        window.deleteStaff = function(index) {
+        window.deleteStaff = async function(docId) {
             if (confirm("Delete this staff account?")) {
-                staffAccounts.splice(index, 1);
-                localStorage.setItem('kk_staff', JSON.stringify(staffAccounts));
-                renderStaffList();
+                await deleteDoc(doc(db, "staff", docId));
             }
         };
 
