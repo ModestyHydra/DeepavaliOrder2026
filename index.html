@@ -353,7 +353,6 @@
                 date: new Date().toLocaleString()
             };
 
-            // 1. OPEN WHATSAPP IMMEDIATELY (Bypasses mobile popup blockers)
             let message = `🪔 *NEW DEEPAVALI ORDER (${orderId})* 🪔\n\n`;
             message += `*Name:* ${name}\n`;
             message += `*Phone:* ${phone}\n`;
@@ -371,7 +370,6 @@
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/601126862303?text=${encodedMessage}`, '_blank');
 
-            // 2. SAVE TO FIREBASE & DEDUCT STOCK IN THE BACKGROUND
             await addDoc(collection(db, "orders"), newOrder);
 
             for (let item of cart) {
