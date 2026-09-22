@@ -935,9 +935,8 @@
             </div>
 
             <div class="form-group" style="margin-bottom:10px;">
-                <label class="form-label"><i class="fas fa-image"></i> Product Photo (Device Upload):</label>
-                <input type="file" id="prod-photo-file" accept="image/*" class="form-input" onchange="previewProdPhoto(this)">
-                <img id="prod-photo-preview" class="img-preview hidden" alt="Product Preview">
+                <label class="form-label"><i class="fas fa-image"></i> Product Photo URL / Link:</label>
+                <input type="text" id="prod-photo-url" class="form-input" placeholder="Paste image link here">
             </div>
 
             <div class="form-group" style="margin-bottom:15px;">
@@ -1013,7 +1012,7 @@
     <!-- Firebase SDKs & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDgcBDdJaGkEBS1ihJASDAayNHWgrJ-UN8",
@@ -1029,7 +1028,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // DEFAULT DATA
         const defaultProducts = [
             { id: 'prod_1', name: "Jam Tart", pcs: "50 pcs", price: 32, stock: 15, icon: "🍍", image: "", inStock: true },
             { id: 'prod_2', name: "Almond London", pcs: "50 pcs", price: 35, stock: 2, icon: "🍫", image: "", inStock: true },
@@ -1049,7 +1047,6 @@
             { id: 'prod_16', name: "Murukku (Tin)", pcs: "1 tin", price: 132, stock: 4, icon: "🥫", image: "", inStock: true }
         ];
 
-        // GLOBAL APP STATE
         let products = [];
         let orders = [];
         let staffAccounts = [];
@@ -1064,15 +1061,13 @@
         let cart = {};
         let currentUser = JSON.parse(localStorage.getItem('kk_session')) || null;
         let currentRole = currentUser ? 'seller' : 'customer';
-        let tempProdPhotoBase64 = "";
         let tempLogoBase64 = "";
         let pendingActionContext = "";
 
-        // INIT FIREBASE REALTIME LISTENERS
         window.addEventListener('DOMContentLoaded', () => {
             applyStoreSettings();
 
-            // 1. Realtime Products Listener
+            // Realtime Products Sync
             onSnapshot(collection(db, "products"), async (snapshot) => {
                 if (snapshot.empty) {
                     for (let p of defaultProducts) {
@@ -1086,13 +1081,13 @@
                 }
             });
 
-            // 2. Realtime Orders Listener
+            // Realtime Orders Sync
             onSnapshot(collection(db, "orders"), (snapshot) => {
                 orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
                 if (currentRole === 'seller') renderSellerOrdersList();
             });
 
-            // 3. Realtime Staff Accounts Listener (Fixes multi-device staff login issue)
+            // Realtime Staff Accounts Sync
             onSnapshot(collection(db, "staff"), (snapshot) => {
                 staffAccounts = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
                 if (currentRole === 'seller' && currentUser && currentUser.isOwner) {
@@ -1105,7 +1100,6 @@
             }
         });
 
-        // FESTIVE THEMES & BRANDING
         window.changeFestiveTheme = function(theme) {
             document.body.className = `theme-${theme}`;
             const banner = document.getElementById('festive-banner');
@@ -1148,7 +1142,6 @@
             }
         }
 
-        // LOW STOCK & NOTIFICATION SYSTEM
         function checkAndGenerateStockAlerts() {
             products.forEach(p => {
                 if (p.stock <= 2 && p.stock > 0) {
@@ -1205,7 +1198,6 @@
             closeNotifModal();
         };
 
-        // RENDER CUSTOMER MENU
         window.renderCustomerMenu = function(filterText = "") {
             const grid = document.getElementById('menu-grid');
             if (!grid) return;
@@ -1288,7 +1280,6 @@
             document.getElementById('cart-total').innerText = `RM ${totalPrice}`;
         }
 
-        // SECURE WHATSAPP ORDER & REALTIME TRANSACTION
         window.sendWhatsAppOrder = async function() {
             const custNameInput = document.getElementById('customer-short-name');
             const custName = custNameInput.value.trim();
@@ -1340,11 +1331,9 @@
             whatsappText += `TOTAL AMOUNT: RM ${total.toFixed(2)}\n`;
             whatsappText += `------------------------------------`;
 
-            // Open WhatsApp immediately
             const encoded = encodeURIComponent(whatsappText);
             window.open(`https://wa.me/601126862303?text=${encoded}`, '_blank');
 
-            // TRANSACTION SAFELY DEDUCT STOCK & SAVE ORDER IN FIREBASE
             try {
                 for (let [id, qty] of entries) {
                     const productRef = doc(db, "products", String(id));
@@ -1380,11 +1369,10 @@
                 renderCustomerMenu();
             } catch (err) {
                 console.error("Stock transaction failed: ", err);
-                alert("Order opened in WhatsApp, but stock adjustment encountered a conflict. Please double-check inventory counts.");
+                alert("Order opened in WhatsApp, but stock adjustment encountered a conflict.");
             }
         };
 
-        // LOGIN & LOGIN ROLES
         window.toggleModeSwitch = function() {
             if (currentRole === 'customer') {
                 document.getElementById('login-modal').classList.remove('hidden');
@@ -1450,7 +1438,6 @@
             renderStaffList();
         }
 
-        // RESTRICTED ACTION CHECKS & PERMISSION REQUESTS
         function hasPermission(permType) {
             if (!currentUser) return false;
             if (currentUser.isOwner) return true;
@@ -1473,7 +1460,6 @@
             document.getElementById('perm-request-note').value = "";
         };
 
-        // SELLER TABS
         window.switchSellerTab = function(tabName) {
             document.querySelectorAll('.seller-nav .tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-btn-${tabName}`).classList.add('active');
@@ -1497,7 +1483,6 @@
             }
         };
 
-        // RENDER SELLER STOCK
         function renderSellerStockList() {
             const container = document.getElementById('seller-stock-list');
             if (!container) return;
@@ -1564,10 +1549,7 @@
             document.getElementById('prod-pcs').value = "";
             document.getElementById('prod-stock').value = "10";
             document.getElementById('prod-icon').value = "🍪";
-            document.getElementById('prod-photo-file').value = "";
-            document.getElementById('prod-photo-preview').classList.add('hidden');
-            tempProdPhotoBase64 = "";
-
+            document.getElementById('prod-photo-url').value = "";
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
@@ -1582,36 +1564,13 @@
             document.getElementById('prod-pcs').value = prod.pcs;
             document.getElementById('prod-stock').value = prod.stock;
             document.getElementById('prod-icon').value = prod.icon || "🍪";
-            document.getElementById('prod-photo-file').value = "";
-            
-            tempProdPhotoBase64 = prod.image || "";
-            const preview = document.getElementById('prod-photo-preview');
-            if (prod.image) {
-                preview.src = prod.image;
-                preview.classList.remove('hidden');
-            } else {
-                preview.classList.add('hidden');
-            }
+            document.getElementById('prod-photo-url').value = prod.image || "";
 
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
         window.closeProductModal = function() { 
-            tempProdPhotoBase64 = "";
             document.getElementById('product-modal').classList.add('hidden'); 
-        };
-
-        window.previewProdPhoto = function(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempProdPhotoBase64 = e.target.result;
-                    const preview = document.getElementById('prod-photo-preview');
-                    preview.src = tempProdPhotoBase64;
-                    preview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
         };
 
         window.saveProduct = async function() {
@@ -1622,6 +1581,7 @@
                 const pcs = document.getElementById('prod-pcs').value.trim();
                 const stock = parseInt(document.getElementById('prod-stock').value);
                 const icon = document.getElementById('prod-icon').value.trim();
+                const imageUrl = document.getElementById('prod-photo-url').value.trim();
 
                 if (!name || isNaN(price) || !pcs || isNaN(stock)) {
                     alert("Please fill in Name, Price, Pcs/Size, and Stock Quantity properly!");
@@ -1635,11 +1595,9 @@
                         pcs: pcs,
                         stock: stock,
                         inStock: stock > 0,
-                        icon: icon || "🍪"
+                        icon: icon || "🍪",
+                        image: imageUrl
                     };
-                    if (tempProdPhotoBase64 !== "") {
-                        updatedData.image = tempProdPhotoBase64;
-                    }
                     await updateDoc(doc(db, "products", String(id)), updatedData);
                 } else {
                     const newId = 'prod_' + Date.now();
@@ -1650,7 +1608,7 @@
                         pcs: pcs,
                         stock: stock,
                         icon: icon || "🍪",
-                        image: tempProdPhotoBase64 || "",
+                        image: imageUrl,
                         inStock: stock > 0
                     };
                     await setDoc(doc(db, "products", newId), newProd);
@@ -1670,7 +1628,6 @@
             }
         };
 
-        // ORDERS MANAGEMENT
         function renderSellerOrdersList() {
             const container = document.getElementById('seller-orders-list');
             if (!container) return;
@@ -1728,7 +1685,6 @@
             }
         };
 
-        // STAFF MANAGEMENT (SYNCED VIA FIREBASE)
         function renderStaffList() {
             const container = document.getElementById('staff-list');
             if (!container) return;
@@ -1791,7 +1747,6 @@
             }
         };
 
-        // STORE SETTINGS
         window.previewLogoFile = function(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -1821,7 +1776,6 @@
             alert("Store Settings & Theme updated successfully!");
         };
 
-        // SEARCH EVENT LISTENER
         document.getElementById('search-input').addEventListener('input', (e) => {
             renderCustomerMenu(e.target.value);
         });
