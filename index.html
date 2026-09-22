@@ -28,14 +28,20 @@
         <!-- Product Catalog (Left 2 Columns) -->
         <div class="md:col-span-2">
             <!-- Admin Panel (Hidden by default) -->
-            <div id="admin-panel" class="hidden bg-amber-100 p-6 rounded-xl shadow-md mb-6 border border-amber-300">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-amber-900">⚙️ Admin Dashboard</h2>
-                    <button onclick="addNewProductPrompt()" class="bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-600">+ Add New Cookie</button>
+            <div id="admin-panel" class="hidden bg-amber-100 p-6 rounded-xl shadow-md mb-6 border border-amber-300 space-y-6">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-amber-900">⚙️ Cookie Inventory Manager</h2>
+                        <button onclick="addNewProductPrompt()" class="bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-600">+ Add New Cookie</button>
+                    </div>
+                    <div id="admin-product-list" class="space-y-3"></div>
                 </div>
-                <p class="text-xs text-amber-800 mb-4">Changes save to this browser. Update prices, stock, or image links below:</p>
-                <div id="admin-product-list" class="space-y-3">
-                    <!-- Admin rows injected via JS -->
+
+                <!-- Customer Orders Section -->
+                <div class="border-t border-amber-300 pt-4">
+                    <h2 class="text-xl font-bold text-amber-900 mb-2">📋 Customer Orders</h2>
+                    <p class="text-xs text-amber-800 mb-3">Orders automatically show up here when customers checkout. Update their status after receiving payment.</p>
+                    <div id="admin-order-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
                 </div>
             </div>
 
@@ -62,15 +68,14 @@
             <!-- Customer Form -->
             <div class="space-y-3 mb-4">
                 <input type="text" id="cust-name" placeholder="Your Full Name" class="w-full p-2 border rounded-lg text-sm">
-                <input type="tel" id="cust-phone" placeholder="Phone Number (e.g., 0123456789)" class="w-full p-2 border rounded-lg text-sm">
+                <input type="tel" id="cust-phone" placeholder="Phone Number (e.g., 01126862303)" class="w-full p-2 border rounded-lg text-sm">
                 <textarea id="cust-address" placeholder="Delivery Address" class="w-full p-2 border rounded-lg text-sm" rows="2"></textarea>
             </div>
 
-            <!-- Payment Info -->
-            <div class="bg-amber-50 p-3 rounded-lg text-xs mb-4 border border-amber-200 space-y-1">
-                <p class="font-bold text-amber-900">Payment Method:</p>
-                <p>1. **DuitNow QR:** Scan upon order confirmation.</p>
-                <p>2. **Bank Transfer:** Maybank 1234-5678-9012 (Deepavali Cookies)</p>
+            <!-- Checkout Instructions -->
+            <div class="bg-amber-50 p-3 rounded-lg text-xs mb-4 border border-amber-200 space-y-1 text-amber-900">
+                <p class="font-bold">📱 WhatsApp Checkout:</p>
+                <p>Clicking checkout will log your order and open WhatsApp. We will reply with payment instructions directly in the chat!</p>
             </div>
 
             <button onclick="checkout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-500 transition">
@@ -81,7 +86,6 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Default Products
         const defaultProducts = [
             { id: 1, name: "Biskut Semperit", price: 25.00, stock: 15, image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400" },
             { id: 2, name: "Nastar Pineapple Tart", price: 32.00, stock: 10, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400" },
@@ -89,8 +93,8 @@
             { id: 4, name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
         ];
 
-        // Load products from browser memory or use defaults
         let products = JSON.parse(localStorage.getItem('deepavali_products')) || defaultProducts;
+        let orders = JSON.parse(localStorage.getItem('deepavali_orders')) || [];
         let cart = [];
         let isAdminOpen = false;
 
@@ -122,7 +126,7 @@
         }
 
         function toggleAdmin() {
-            const pin = prompt("Enter Admin PIN (Default is 1234):");
+            const pin = prompt("Enter Admin PIN:");
             if (pin === "1234") {
                 isAdminOpen = !isAdminOpen;
                 const panel = document.getElementById('admin-panel');
@@ -140,8 +144,9 @@
         }
 
         function renderAdminPanel() {
+            // Render Inventory
             const adminList = document.getElementById('admin-product-list');
-            adminList.innerHTML = '';
+            adminList.innerHTML = '<h3 class="font-bold text-sm text-amber-900 mb-2">Edit Cookies & Stock</h3>';
             products.forEach(p => {
                 adminList.innerHTML += `
                     <div class="bg-white p-3 rounded-lg shadow-sm border flex flex-col sm:flex-row gap-2 items-center justify-between text-sm">
@@ -156,6 +161,55 @@
                     </div>
                 `;
             });
+
+            // Render Orders
+            const orderList = document.getElementById('admin-order-list');
+            orderList.innerHTML = '';
+            if (orders.length === 0) {
+                orderList.innerHTML = '<p class="text-sm text-gray-500 italic">No orders received yet.</p>';
+                return;
+            }
+
+            orders.forEach(o => {
+                let itemsSummary = o.items.map(i => `${i.name} (${i.qty}x)`).join(', ');
+                orderList.innerHTML += `
+                    <div class="bg-white p-3 rounded-lg shadow-sm border text-sm mb-2 space-y-1">
+                        <div class="flex justify-between font-bold text-amber-900">
+                            <span>${o.id} - ${o.name} (${o.phone})</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold">${o.status}</span>
+                        </div>
+                        <p class="text-xs text-gray-600">📍 <b>Address:</b> ${o.address}</p>
+                        <p class="text-xs text-gray-600">🍪 <b>Items:</b> ${itemsSummary}</p>
+                        <p class="text-xs font-semibold text-amber-700">💰 Total: RM ${o.total.toFixed(2)} | 🕒 ${o.date}</p>
+                        <div class="flex gap-2 pt-2 items-center justify-between border-t mt-1">
+                            <select onchange="updateOrderStatus('${o.id}', this.value)" class="border p-1 rounded text-xs bg-gray-50 font-medium">
+                                <option value="Pending Payment" ${o.status === 'Pending Payment' ? 'selected' : ''}>Pending Payment</option>
+                                <option value="Paid & Preparing" ${o.status === 'Paid & Preparing' ? 'selected' : ''}>Paid & Preparing</option>
+                                <option value="Shipped / Completed" ${o.status === 'Shipped / Completed' ? 'selected' : ''}>Shipped / Completed</option>
+                                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                            <button onclick="deleteOrder('${o.id}')" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete Record</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateOrderStatus(id, status) {
+            const ord = orders.find(o => o.id === id);
+            if (ord) {
+                ord.status = status;
+                localStorage.setItem('deepavali_orders', JSON.stringify(orders));
+                renderAdminPanel();
+            }
+        }
+
+        function deleteOrder(id) {
+            if (confirm("Are you sure you want to delete this order record?")) {
+                orders = orders.filter(o => o.id !== id);
+                localStorage.setItem('deepavali_orders', JSON.stringify(orders));
+                renderAdminPanel();
+            }
         }
 
         function updateProduct(id) {
@@ -187,7 +241,7 @@
             if (!name) return;
             const price = parseFloat(prompt("Price (RM):", "25.00")) || 25.00;
             const stock = parseInt(prompt("Stock Quantity:", "10")) || 10;
-            const image = prompt("Image URL (Paste image link):", "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400") || "";
+            const image = prompt("Image URL:", "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400") || "";
 
             const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
             products.push({ id: newId, name, price, stock, image });
@@ -264,25 +318,48 @@
                 return;
             }
 
-            let message = `🪔 *NEW DEEPAVALI COOKIE ORDER* 🪔\n\n`;
+            let total = 0;
+            cart.forEach(item => total += item.price * item.qty);
+
+            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+            const newOrder = {
+                id: orderId,
+                name: name,
+                phone: phone,
+                address: address,
+                items: [...cart],
+                total: total,
+                status: 'Pending Payment',
+                date: new Date().toLocaleString()
+            };
+
+            // Save order locally for Admin Console view
+            orders.unshift(newOrder);
+            localStorage.setItem('deepavali_orders', JSON.stringify(orders));
+
+            // Format WhatsApp Message
+            let message = `🪔 *NEW DEEPAVALI ORDER (${orderId})* 🪔\n\n`;
             message += `*Name:* ${name}\n`;
             message += `*Phone:* ${phone}\n`;
             message += `*Address:* ${address}\n\n`;
             message += `*Order Details:*\n`;
 
-            let total = 0;
             cart.forEach(item => {
                 let subtotal = item.price * item.qty;
-                total += subtotal;
                 message += `- ${item.name} (${item.qty}x) = RM ${subtotal.toFixed(2)}\n`;
             });
 
             message += `\n*Total Amount:* RM ${total.toFixed(2)}\n\n`;
-            message += `Please proceed with payment via DuitNow QR or Bank Transfer and send the receipt here!`;
+            message += `Please send me the payment instructions!`;
 
-            const sellerWhatsApp = "60123456789"; // Replace with your phone number (e.g., 60123456789)
+            const sellerWhatsApp = "601126862303";
             const encodedMessage = encodeURIComponent(message);
             
+            // Clear cart & refresh view
+            cart = [];
+            renderCart();
+            if (isAdminOpen) renderAdminPanel();
+
             window.open(`https://wa.me/${sellerWhatsApp}?text=${encodedMessage}`, '_blank');
         }
 
