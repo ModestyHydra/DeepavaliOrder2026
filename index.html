@@ -132,7 +132,7 @@
             </div>
         </div>
 
-        <!-- Checkout & Cart Sidebar (Wrapped to cleanly hide during admin session) -->
+        <!-- Checkout & Cart Sidebar (Explicitly hidden via JavaScript when admin is logged in) -->
         <div id="cart-sidebar-container" class="transition-all duration-300">
             <div class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-6">
                 <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
@@ -428,8 +428,10 @@
                 adminBtn.innerText = "🚪 Logout";
                 adminBtn.className = "bg-red-700 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-red-800 transition text-white shadow-sm";
 
-                // Hides the "Your Order" sidebar and expands catalog to full width
-                cartSidebarContainer.style.display = 'none';
+                // Force hide the order sidebar and expand catalog grid to full width
+                if (cartSidebarContainer) {
+                    cartSidebarContainer.style.setProperty('display', 'none', 'important');
+                }
                 mainContent.className = "md:col-span-3 transition-all duration-300";
             } else {
                 panel.classList.add('hidden');
@@ -437,8 +439,10 @@
                 adminBtn.innerText = "⚙️ Admin";
                 adminBtn.className = "bg-amber-800 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm";
 
-                // Brings back the "Your Order" sidebar for normal customer view
-                cartSidebarContainer.style.display = 'block';
+                // Show back the order sidebar for customers
+                if (cartSidebarContainer) {
+                    cartSidebarContainer.style.removeProperty('display');
+                }
                 mainContent.className = "md:col-span-2 transition-all duration-300";
             }
         }
