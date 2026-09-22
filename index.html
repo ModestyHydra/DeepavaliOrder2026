@@ -81,7 +81,7 @@
     <!-- Firebase SDKs & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, setDoc, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, setDoc, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDgcBDdJaGkEBS1ihJASDAayNHWgrJ-UN8",
@@ -109,7 +109,6 @@
             { id: "4", name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
         ];
 
-        // Real-time listener for products & stock sync
         onSnapshot(collection(db, "products"), async (snapshot) => {
             if (snapshot.empty) {
                 for (let p of defaultProducts) {
@@ -122,7 +121,6 @@
             }
         });
 
-        // Real-time listener for orders across devices
         onSnapshot(collection(db, "orders"), (snapshot) => {
             orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
             if (isAdminOpen) renderAdminOrders();
@@ -355,16 +353,7 @@
                 date: new Date().toLocaleString()
             };
 
-            await addDoc(collection(db, "orders"), newOrder);
-
-            for (let item of cart) {
-                const currentProd = products.find(p => p.id === item.id);
-                if (currentProd) {
-                    const newStock = Math.max(0, currentProd.stock - item.qty);
-                    await updateDoc(doc(db, "products", item.id), { stock: newStock });
-                }
-            }
-
+            // 1. OPEN WHATSAPP IMMEDIATELY (Bypasses mobile popup blockers)
             let message = `🪔 *NEW DEEPAVALI ORDER (${orderId})* 🪔\n\n`;
             message += `*Name:* ${name}\n`;
             message += `*Phone:* ${phone}\n`;
@@ -380,11 +369,21 @@
             message += `Please send me the payment instructions!`;
 
             const encodedMessage = encodeURIComponent(message);
-            
+            window.open(`https://wa.me/601126862303?text=${encodedMessage}`, '_blank');
+
+            // 2. SAVE TO FIREBASE & DEDUCT STOCK IN THE BACKGROUND
+            await addDoc(collection(db, "orders"), newOrder);
+
+            for (let item of cart) {
+                const currentProd = products.find(p => p.id === item.id);
+                if (currentProd) {
+                    const newStock = Math.max(0, currentProd.stock - item.qty);
+                    await updateDoc(doc(db, "products", item.id), { stock: newStock });
+                }
+            }
+
             cart = [];
             renderCart();
-
-            window.open(`https://wa.me/601126862303?text=${encodedMessage}`, '_blank');
         }
 
         window.updateOrderStatus = async function(docId, status) {
