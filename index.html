@@ -38,7 +38,7 @@
     <!-- Main Content Area -->
     <main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         
-        <!-- Product Catalog / Admin Area -->
+        <!-- Product Catalog -->
         <div id="main-content-area" class="md:col-span-2 transition-all duration-300">
             <!-- Admin Panel with Tabs -->
             <div id="admin-panel" class="hidden bg-white text-gray-800 p-6 rounded-xl shadow-md mb-6 border border-amber-300 space-y-6">
@@ -59,10 +59,20 @@
                     <div id="admin-product-list" class="space-y-3"></div>
                 </div>
 
-                <!-- TAB 2: Live Customer Orders -->
+                <!-- TAB 2: Live Customer Orders with Filter -->
                 <div id="admin-tab-orders" class="space-y-4 hidden">
-                    <h2 class="text-lg font-bold text-amber-900">📋 Live Customer Orders</h2>
-                    <p class="text-xs text-amber-800">Syncs in real-time across your phone and laptop!</p>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <h2 class="text-lg font-bold text-amber-900">📋 Live Customer Orders</h2>
+                            <p class="text-xs text-amber-800">Syncs in real-time across your phone and laptop!</p>
+                        </div>
+                        <div>
+                            <select id="order-sort-select" onchange="renderAdminOrders()" class="border p-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border-amber-300">
+                                <option value="newest">🕒 Sort: Newest First (9-0)</option>
+                                <option value="oldest">🕒 Sort: Oldest First (0-9)</option>
+                            </select>
+                        </div>
+                    </div>
                     <div id="admin-order-list" class="space-y-3 max-h-[500px] overflow-y-auto"></div>
                 </div>
 
@@ -132,39 +142,37 @@
             </div>
         </div>
 
-        <!-- Checkout & Cart Sidebar (Explicitly hidden via JavaScript when admin is logged in) -->
-        <div id="cart-sidebar-container" class="transition-all duration-300">
-            <div class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-6">
-                <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
-                <div id="cart-items" class="divide-y divide-gray-200 max-h-60 overflow-y-auto mb-4">
-                    <p class="text-gray-500 text-sm">Your cart is empty.</p>
-                </div>
-                
-                <div class="border-t pt-4 mb-4">
-                    <div class="flex justify-between font-bold text-lg">
-                        <span>Total:</span>
-                        <span id="cart-total">RM 0.00</span>
-                    </div>
-                </div>
-
-                <!-- Customer Form -->
-                <div class="space-y-3 mb-4">
-                    <input type="text" id="cust-name" placeholder="Your Full Name" class="w-full p-2 border rounded-lg text-sm">
-                    <input type="tel" id="cust-phone" placeholder="Phone Number (e.g., 01126862303)" class="w-full p-2 border rounded-lg text-sm">
-                    <textarea id="cust-address" placeholder="Delivery Address" class="w-full p-2 border rounded-lg text-sm" rows="2"></textarea>
-                </div>
-
-                <button onclick="checkout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-500 transition flex items-center justify-center gap-2">
-                    Checkout via WhatsApp 📱
-                </button>
+        <!-- Checkout & Cart Sidebar -->
+        <div id="cart-sidebar" class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-6">
+            <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
+            <div id="cart-items" class="divide-y divide-gray-200 max-h-60 overflow-y-auto mb-4">
+                <p class="text-gray-500 text-sm">Your cart is empty.</p>
             </div>
+            
+            <div class="border-t pt-4 mb-4">
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total:</span>
+                    <span id="cart-total">RM 0.00</span>
+                </div>
+            </div>
+
+            <!-- Customer Form -->
+            <div class="space-y-3 mb-4">
+                <input type="text" id="cust-name" placeholder="Your Full Name" class="w-full p-2 border rounded-lg text-sm">
+                <input type="tel" id="cust-phone" placeholder="Phone Number (e.g., 01126862303)" class="w-full p-2 border rounded-lg text-sm">
+                <textarea id="cust-address" placeholder="Delivery Address" class="w-full p-2 border rounded-lg text-sm" rows="2"></textarea>
+            </div>
+
+            <button onclick="checkout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-500 transition flex items-center justify-center gap-2">
+                Checkout via WhatsApp 📱
+            </button>
         </div>
     </main>
 
     <!-- Firebase SDKs & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, setDoc, doc, updateDoc, deleteDoc, onSnapshot, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, setDoc, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDgcBDdJaGkEBS1ihJASDAayNHWgrJ-UN8",
@@ -193,13 +201,13 @@
             { id: "4", name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
         ];
 
-        function convertFileToBase64(file) {
+        function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => {
+                reader.onload = (event) => {
                     const img = new Image();
-                    img.src = reader.result;
+                    img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const MAX_WIDTH = 400;
@@ -225,9 +233,9 @@
                         ctx.drawImage(img, 0, 0, width, height);
                         resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
-                    img.onerror = error => reject(error);
+                    img.onerror = (error) => reject(error);
                 };
-                reader.onerror = error => reject(error);
+                reader.onerror = (error) => reject(error);
             });
         }
 
@@ -339,7 +347,7 @@
             const logoFileInput = document.getElementById('setting-logo-file');
             if (logoFileInput.files && logoFileInput.files[0]) {
                 try {
-                    logoUrl = await convertFileToBase64(logoFileInput.files[0]);
+                    logoUrl = await compressImage(logoFileInput.files[0]);
                 } catch (err) {
                     alert("Error processing logo image.");
                     return;
@@ -349,7 +357,7 @@
             const headerFileInput = document.getElementById('setting-header-file');
             if (headerFileInput.files && headerFileInput.files[0]) {
                 try {
-                    headerImageUrl = await convertFileToBase64(headerFileInput.files[0]);
+                    headerImageUrl = await compressImage(headerFileInput.files[0]);
                 } catch (err) {
                     alert("Error processing header banner image.");
                     return;
@@ -366,7 +374,6 @@
             alert("Webpage settings & header updated successfully!");
         }
 
-        // Real-time products listener
         onSnapshot(collection(db, "products"), async (snapshot) => {
             if (snapshot.empty) {
                 for (let p of defaultProducts) {
@@ -379,12 +386,9 @@
             }
         });
 
-        // Real-time orders listener (instantly updates order history tab)
         onSnapshot(collection(db, "orders"), (snapshot) => {
             orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
-            if (isAdminOpen) {
-                renderAdminOrders();
-            }
+            if (isAdminOpen) renderAdminOrders();
         });
 
         window.renderProducts = function() {
@@ -420,7 +424,7 @@
             isAdminOpen = !isAdminOpen;
             const panel = document.getElementById('admin-panel');
             const adminBtn = document.getElementById('admin-btn');
-            const cartSidebarContainer = document.getElementById('cart-sidebar-container');
+            const cartSidebar = document.getElementById('cart-sidebar');
             const mainContent = document.getElementById('main-content-area');
 
             if (isAdminOpen) {
@@ -432,9 +436,7 @@
                 adminBtn.innerText = "🚪 Logout";
                 adminBtn.className = "bg-red-700 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-red-800 transition text-white shadow-sm";
 
-                if (cartSidebarContainer) {
-                    cartSidebarContainer.style.setProperty('display', 'none', 'important');
-                }
+                cartSidebar.classList.add('hidden');
                 mainContent.className = "md:col-span-3 transition-all duration-300";
             } else {
                 panel.classList.add('hidden');
@@ -442,9 +444,7 @@
                 adminBtn.innerText = "⚙️ Admin";
                 adminBtn.className = "bg-amber-800 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm";
 
-                if (cartSidebarContainer) {
-                    cartSidebarContainer.style.removeProperty('display');
-                }
+                cartSidebar.classList.remove('hidden');
                 mainContent.className = "md:col-span-2 transition-all duration-300";
             }
         }
@@ -483,17 +483,30 @@
                 return;
             }
 
-            orders.forEach(o => {
-                let itemsSummary = o.items ? o.items.map(i => `${i.name} (${i.qty}x)`).join(', ') : '';
+            const sortOption = document.getElementById('order-sort-select') ? document.getElementById('order-sort-select').value : 'newest';
+            
+            // Sort orders based on timestamp or creation time
+            let sortedOrders = [...orders].sort((a, b) => {
+                let timeA = new Date(a.date).getTime() || 0;
+                let timeB = new Date(b.date).getTime() || 0;
+                if (sortOption === 'oldest') {
+                    return timeA - timeB; // 0-9 (Oldest first)
+                } else {
+                    return timeB - timeA; // 9-0 (Newest first)
+                }
+            });
+
+            sortedOrders.forEach(o => {
+                let itemsSummary = o.items.map(i => `${i.name} (${i.qty}x)`).join(', ');
                 orderList.innerHTML += `
                     <div class="bg-white p-3 rounded-lg shadow-sm border text-sm mb-2 space-y-1 text-gray-800">
                         <div class="flex justify-between font-bold text-amber-900">
-                            <span>${o.orderId || 'ORD'} - ${o.name} (${o.phone})</span>
+                            <span>${o.orderId} - ${o.name} (${o.phone})</span>
                             <span class="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold">${o.status}</span>
                         </div>
                         <p class="text-xs text-gray-600">📍 <b>Address:</b> ${o.address}</p>
                         <p class="text-xs text-gray-600">🍪 <b>Items:</b> ${itemsSummary}</p>
-                        <p class="text-xs font-semibold text-amber-700">💰 Total: RM ${Number(o.total).toFixed(2)} | 🕒 ${o.date}</p>
+                        <p class="text-xs font-semibold text-amber-700">💰 Total: RM ${o.total.toFixed(2)} | 🕒 ${o.date}</p>
                         <div class="flex gap-2 pt-2 items-center justify-between border-t mt-1">
                             <select onchange="updateOrderStatus('${o.docId}', this.value)" class="border p-1 rounded text-xs bg-gray-50 font-medium">
                                 <option value="Pending Payment" ${o.status === 'Pending Payment' ? 'selected' : ''}>Pending Payment</option>
@@ -519,7 +532,7 @@
 
             if (fileInput.files && fileInput.files[0]) {
                 try {
-                    imageUrl = await convertFileToBase64(fileInput.files[0]);
+                    imageUrl = await compressImage(fileInput.files[0]);
                 } catch (err) {
                     alert("Error processing product image.");
                     return;
@@ -604,7 +617,6 @@
             renderCart();
         }
 
-        // Checkout function now reliably pushes to Firebase and syncs real-time order history
         window.checkout = async function() {
             const name = document.getElementById('cust-name').value.trim();
             const phone = document.getElementById('cust-phone').value.trim();
@@ -641,6 +653,7 @@
             message += `*Address:* ${address}\n\n`;
             message += `*Order Details:*\n`;
 
+            cart.items?.forEach(item => {}); // safe guard
             cart.forEach(item => {
                 let subtotal = item.price * item.qty;
                 message += `- ${item.name} (${item.qty}x) = RM ${subtotal.toFixed(2)}\n`;
@@ -652,28 +665,18 @@
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/601126862303?text=${encodedMessage}`, '_blank');
 
-            try {
-                // Save order to Firestore so it immediately pops up in the Admin Order History tab
-                await addDoc(collection(db, "orders"), newOrder);
+            await addDoc(collection(db, "orders"), newOrder);
 
-                // Deduct stock levels in real-time
-                for (let item of cart) {
-                    const currentProd = products.find(p => p.id === item.id);
-                    if (currentProd) {
-                        const newStock = Math.max(0, currentProd.stock - item.qty);
-                        await updateDoc(doc(db, "products", item.id), { stock: newStock });
-                    }
+            for (let item of cart) {
+                const currentProd = products.find(p => p.id === item.id);
+                if (currentProd) {
+                    const newStock = Math.max(0, currentProd.stock - item.qty);
+                    await updateDoc(doc(db, "products", item.id), { stock: newStock });
                 }
-
-                cart = [];
-                renderCart();
-                document.getElementById('cust-name').value = '';
-                document.getElementById('cust-phone').value = '';
-                document.getElementById('cust-address').value = '';
-            } catch (err) {
-                console.error("Error saving order: ", err);
-                alert("Order placed via WhatsApp, but database sync had an issue.");
             }
+
+            cart = [];
+            renderCart();
         }
 
         window.updateOrderStatus = async function(docId, status) {
