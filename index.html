@@ -409,7 +409,7 @@
                             <span class="bg-amber-100 text-amber-900 px-3 py-1.5 rounded-lg font-bold text-sm">RM ${Number(p.price).toFixed(2)}</span>
                             <div class="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
                                 <button onclick="updateCartQty('${p.id}', -1)" ${p.stock <= 0 ? 'disabled' : ''} class="w-7 h-7 flex items-center justify-center font-bold text-gray-600 hover:bg-white rounded shadow-sm transition">-</button>
-                                <span class="w-8 text-center text-sm font-bold text-gray-800">${cartQty}</span>
+                                <span id="product-qty-${p.id}" class="w-8 text-center text-sm font-bold text-gray-800">${cartQty}</span>
                                 <button onclick="updateCartQty('${p.id}', 1)" ${p.stock <= 0 ? 'disabled' : ''} class="w-7 h-7 flex items-center justify-center font-bold text-gray-600 hover:bg-white rounded shadow-sm transition">+</button>
                             </div>
                         </div>
@@ -441,7 +441,13 @@
                     cart.push({ ...product, qty: newQty });
                 }
             }
-            renderProducts();
+
+            // Update ONLY the specific quantity span instantly without re-rendering images (prevents flickering)
+            const qtySpan = document.getElementById(`product-qty-${productId}`);
+            if (qtySpan) {
+                qtySpan.innerText = newQty;
+            }
+
             renderCart();
         }
 
@@ -630,7 +636,10 @@
 
         window.removeFromCart = function(productId) {
             cart = cart.filter(item => item.id !== productId);
-            renderProducts();
+            const qtySpan = document.getElementById(`product-qty-${productId}`);
+            if (qtySpan) {
+                qtySpan.innerText = '0';
+            }
             renderCart();
         }
 
