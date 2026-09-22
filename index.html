@@ -9,28 +9,33 @@
 </head>
 <body id="body-bg" class="bg-amber-50 text-gray-800 transition-colors duration-300 min-h-screen">
 
-    <!-- Standard Size Header: Logo at top, Store Name & Description Below -->
-    <header id="header-container" class="bg-amber-700 bg-cover bg-center py-4 px-4 shadow-md sticky top-0 z-50 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center">
+    <!-- Floating Sticky Mini Logo (Appears when scrolling down) -->
+    <div id="floating-logo" class="fixed top-3 left-3 z-50 hidden transition-all duration-300">
+        <img id="floating-logo-img" src="" alt="Mini Logo" class="w-10 h-10 object-cover rounded-full border-2 border-white shadow-lg">
+    </div>
+
+    <!-- Slim & Compact Header (Scrolls naturally with page) -->
+    <header id="header-container" class="bg-amber-700 bg-cover bg-center py-2 px-4 shadow-md z-40 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center">
         
         <!-- Top Utility Bar: Admin & Cart Buttons -->
-        <div class="w-full flex justify-between items-center max-w-5xl mb-2 px-2">
+        <div class="w-full flex justify-between items-center max-w-5xl mb-1 px-2">
             <div></div> <!-- Spacer -->
             <div class="flex gap-2">
-                <button onclick="toggleAdmin()" id="admin-btn" class="bg-amber-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm">
+                <button onclick="toggleAdmin()" id="admin-btn" class="bg-amber-800 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm">
                     ⚙️ Admin
                 </button>
-                <button id="cart-toggle-btn" onclick="toggleCart()" class="bg-amber-600 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 hover:bg-amber-500 transition text-white shadow-sm">
+                <button id="cart-toggle-btn" onclick="toggleCart()" class="bg-amber-600 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 hover:bg-amber-500 transition text-white shadow-sm">
                     🛒 Cart (<span id="cart-count">0</span>)
                 </button>
             </div>
         </div>
 
-        <!-- Center Stack: Logo at top, Store Name & Description Below -->
-        <div class="flex flex-col items-center space-y-1">
-            <img id="header-logo" src="" alt="Logo" class="w-14 h-14 object-cover rounded-full border-2 border-white/80 shadow-md hidden">
+        <!-- Center Stack: Slim Logo & Title -->
+        <div class="flex flex-col items-center space-y-0.5">
+            <img id="header-logo" src="" alt="Logo" class="w-10 h-10 object-cover rounded-full border-2 border-white/80 shadow-sm hidden">
             <div>
-                <h1 id="header-title" class="text-xl font-bold tracking-wide text-white">🪔 Deepavali Cookie Store</h1>
-                <p id="header-subtitle" class="text-xs text-amber-200 opacity-90 hidden">Delicious Festive Treats</p>
+                <h1 id="header-title" class="text-lg font-bold tracking-wide text-white">🪔 Deepavali Cookie Store</h1>
+                <p id="header-subtitle" class="text-[11px] text-amber-200 opacity-90 hidden">Delicious Festive Treats</p>
             </div>
         </div>
     </header>
@@ -133,7 +138,7 @@
         </div>
 
         <!-- Checkout & Cart Sidebar -->
-        <div id="cart-sidebar" class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-20">
+        <div id="cart-sidebar" class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-6">
             <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
             <div id="cart-items" class="divide-y divide-gray-200 max-h-60 overflow-y-auto mb-4">
                 <p class="text-gray-500 text-sm">Your cart is empty.</p>
@@ -190,6 +195,16 @@
             { id: "3", name: "Almond London", price: 30.00, stock: 8, image: "https://images.unsplash.com/photo-1548848221-0c2e68f3a6a3?w=400" },
             { id: "4", name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
         ];
+
+        // Scroll listener to toggle floating corner logo
+        window.addEventListener('scroll', () => {
+            const floatingLogo = document.getElementById('floating-logo');
+            if (window.scrollY > 120 && currentSettings.logo) {
+                floatingLogo.classList.remove('hidden');
+            } else {
+                floatingLogo.classList.add('hidden');
+            }
+        });
 
         window.switchAdminTab = function(tabName) {
             document.getElementById('admin-tab-inventory').classList.add('hidden');
@@ -255,19 +270,22 @@
             }
 
             const logoEl = document.getElementById('header-logo');
+            const floatingLogoImg = document.getElementById('floating-logo-img');
             if (data.logo) {
                 logoEl.src = data.logo;
                 logoEl.classList.remove('hidden');
+                floatingLogoImg.src = data.logo;
             } else {
                 logoEl.classList.add('hidden');
+                document.getElementById('floating-logo').classList.add('hidden');
             }
 
             const headerContainer = document.getElementById('header-container');
             if (headerType === 'image' && headerImage) {
-                headerContainer.className = `bg-cover bg-center py-4 px-4 shadow-md sticky top-0 z-50 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center`;
+                headerContainer.className = `bg-cover bg-center py-2 px-4 shadow-md z-40 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center`;
                 headerContainer.style.backgroundImage = `url('${headerImage}')`;
             } else {
-                headerContainer.className = `${headerColorClass} bg-cover bg-center py-4 px-4 shadow-md sticky top-0 z-50 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center`;
+                headerContainer.className = `${headerColorClass} bg-cover bg-center py-2 px-4 shadow-md z-40 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center`;
                 headerContainer.style.backgroundImage = '';
             }
 
@@ -392,7 +410,7 @@
                 renderAdminOrders();
                 
                 adminBtn.innerText = "🚪 Logout";
-                adminBtn.className = "bg-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-800 transition text-white shadow-sm";
+                adminBtn.className = "bg-red-700 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-red-800 transition text-white shadow-sm";
 
                 cartSidebar.classList.add('hidden');
                 mainContent.className = "md:col-span-3 transition-all duration-300";
@@ -400,7 +418,7 @@
                 panel.classList.add('hidden');
                 
                 adminBtn.innerText = "⚙️ Admin";
-                adminBtn.className = "bg-amber-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm";
+                adminBtn.className = "bg-amber-800 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-amber-900 transition text-white shadow-sm";
 
                 cartSidebar.classList.remove('hidden');
                 mainContent.className = "md:col-span-2 transition-all duration-300";
