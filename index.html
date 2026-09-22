@@ -59,7 +59,7 @@
                     <div id="admin-product-list" class="space-y-3"></div>
                 </div>
 
-                <!-- TAB 2: Live Customer Orders with Filter -->
+                <!-- TAB 2: Live Customer Orders with Sorting Filter -->
                 <div id="admin-tab-orders" class="space-y-4 hidden">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div>
@@ -485,7 +485,6 @@
 
             const sortOption = document.getElementById('order-sort-select') ? document.getElementById('order-sort-select').value : 'newest';
             
-            // Sort orders based on timestamp or creation time
             let sortedOrders = [...orders].sort((a, b) => {
                 let timeA = new Date(a.date).getTime() || 0;
                 let timeB = new Date(b.date).getTime() || 0;
@@ -653,7 +652,6 @@
             message += `*Address:* ${address}\n\n`;
             message += `*Order Details:*\n`;
 
-            cart.items?.forEach(item => {}); // safe guard
             cart.forEach(item => {
                 let subtotal = item.price * item.qty;
                 message += `- ${item.name} (${item.qty}x) = RM ${subtotal.toFixed(2)}\n`;
