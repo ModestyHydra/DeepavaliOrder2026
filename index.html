@@ -38,7 +38,7 @@
                 
                 <!-- Webpage Customization Section -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-200 space-y-3">
-                    <h2 class="text-lg font-bold text-amber-900">🎨 Webpage & Layout Customization</h2>
+                    <h2 class="text-lg font-bold text-amber-900">🎨 Webpage & Appearance Customization</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Store Title:</label>
@@ -55,10 +55,19 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Background Theme Color:</label>
                             <select id="setting-theme" class="w-full border p-2 rounded">
-                                <option value="bg-amber-50 text-gray-800">Amber (Warm Gold)</option>
-                                <option value="bg-red-950 text-white">Imperial Maroon (Deepavali Special)</option>
-                                <option value="bg-emerald-950 text-white">Emerald Green</option>
-                                <option value="bg-slate-900 text-white">Dark Midnight</option>
+                                <option value="bg-amber-50">Amber (Warm Gold)</option>
+                                <option value="bg-red-950">Imperial Maroon (Deepavali Special)</option>
+                                <option value="bg-emerald-950">Emerald Green</option>
+                                <option value="bg-slate-900">Dark Midnight</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Text Color:</label>
+                            <select id="setting-textcolor" class="w-full border p-2 rounded">
+                                <option value="text-gray-800">Dark Gray (Default)</option>
+                                <option value="text-white">White</option>
+                                <option value="text-amber-200">Light Gold</option>
+                                <option value="text-yellow-100">Soft Yellow</option>
                             </select>
                         </div>
                     </div>
@@ -154,7 +163,8 @@
                     title: "🪔 Deepavali Cookie Store",
                     subtitle: "Delicious Festive Treats",
                     logo: "",
-                    theme: "bg-amber-50 text-gray-800"
+                    theme: "bg-amber-50",
+                    textColor: "text-gray-800"
                 });
             }
         });
@@ -179,13 +189,14 @@
                 logoEl.classList.add('hidden');
             }
 
-            document.body.className = `${data.theme || 'bg-amber-50 text-gray-800'} transition-colors duration-300`;
+            document.body.className = `${data.theme || 'bg-amber-50'} ${data.textColor || 'text-gray-800'} transition-colors duration-300`;
 
             if (document.getElementById('setting-title')) {
                 document.getElementById('setting-title').value = data.title || "";
                 document.getElementById('setting-subtitle').value = data.subtitle || "";
                 document.getElementById('setting-logo').value = data.logo || "";
-                document.getElementById('setting-theme').value = data.theme || "bg-amber-50 text-gray-800";
+                document.getElementById('setting-theme').value = data.theme || "bg-amber-50";
+                document.getElementById('setting-textcolor').value = data.textColor || "text-gray-800";
             }
         }
 
@@ -194,8 +205,9 @@
             const subtitle = document.getElementById('setting-subtitle').value;
             const logo = document.getElementById('setting-logo').value;
             const theme = document.getElementById('setting-theme').value;
+            const textColor = document.getElementById('setting-textcolor').value;
 
-            await setDoc(doc(db, "settings", "store"), { title, subtitle, logo, theme });
+            await setDoc(doc(db, "settings", "store"), { title, subtitle, logo, theme, textColor });
             alert("Webpage settings updated successfully!");
         }
 
@@ -221,7 +233,7 @@
             list.innerHTML = '';
             products.forEach(p => {
                 list.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 flex flex-col justify-between">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 flex flex-col justify-between text-gray-800">
                         <div>
                             <img src="${p.image}" alt="${p.name}" class="w-full h-36 object-cover rounded-lg mb-3 bg-gray-100" onerror="this.src='https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400'">
                             <h3 class="font-bold text-lg">${p.name}</h3>
@@ -257,21 +269,17 @@
                 renderAdminProducts();
                 renderAdminOrders();
                 
-                // Change Admin button to Logout
                 adminBtn.innerText = "🚪 Logout";
                 adminBtn.className = "bg-red-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-800 transition";
 
-                // Hide Cart/Order Sidebar and expand product area to full width
                 cartSidebar.classList.add('hidden');
                 mainContent.className = "md:col-span-3 transition-all duration-300";
             } else {
                 panel.classList.add('hidden');
                 
-                // Revert Admin button
                 adminBtn.innerText = "⚙️ Admin Login";
                 adminBtn.className = "bg-amber-800 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-amber-900 transition";
 
-                // Restore Cart/Order Sidebar
                 cartSidebar.classList.remove('hidden');
                 mainContent.className = "md:col-span-2 transition-all duration-300";
             }
@@ -282,7 +290,7 @@
             adminList.innerHTML = '<h3 class="font-bold text-sm text-amber-900 mb-2">Edit Cookies, Stock & Upload Photo from Device</h3>';
             products.forEach(p => {
                 adminList.innerHTML += `
-                    <div class="bg-white p-3 rounded-lg shadow-sm border flex flex-col gap-2 text-sm">
+                    <div class="bg-white p-3 rounded-lg shadow-sm border flex flex-col gap-2 text-sm text-gray-800">
                         <div class="flex gap-2 items-center">
                             <input type="text" value="${p.name}" id="name-${p.id}" class="border p-1 rounded w-1/3">
                             <input type="number" value="${p.price}" id="price-${p.id}" class="border p-1 rounded w-20">
@@ -314,7 +322,7 @@
             orders.forEach(o => {
                 let itemsSummary = o.items.map(i => `${i.name} (${i.qty}x)`).join(', ');
                 orderList.innerHTML += `
-                    <div class="bg-white p-3 rounded-lg shadow-sm border text-sm mb-2 space-y-1">
+                    <div class="bg-white p-3 rounded-lg shadow-sm border text-sm mb-2 space-y-1 text-gray-800">
                         <div class="flex justify-between font-bold text-amber-900">
                             <span>${o.orderId} - ${o.name} (${o.phone})</span>
                             <span class="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold">${o.status}</span>
