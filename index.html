@@ -2,86 +2,1018 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deepavali Cookie Store</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-amber-50 text-gray-800">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KK Homemade Biscuits - Festive Specials</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --poster-burgundy: #2E0513;
+            --poster-dark-red: #1A020B;
+            --poster-gold: #FFD700;
+            --poster-gold-metallic: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+            --royal-gold: linear-gradient(135deg, #FFF3A7 0%, #D4AF37 50%, #AA7C11 100%);
+            --card-border: rgba(212, 175, 55, 0.4);
+            --sold-out-red: #e74c3c;
+            --warning-orange: #f39c12;
+            --success-green: #2ecc71;
+        }
 
-    <!-- Header -->
-    <header class="bg-amber-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center max-w-6xl mx-auto rounded-b-xl">
-        <h1 class="text-xl font-bold">🪔 Deepavali Cookie Store</h1>
-        <div class="flex gap-3">
-            <button onclick="toggleAdmin()" id="admin-btn" class="bg-amber-800 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-amber-900">
-                ⚙️ Admin Login
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--poster-dark-red);
+            background-image: 
+                radial-gradient(circle at 50% 0%, #4A081F 0%, transparent 70%),
+                radial-gradient(circle at 50% 100%, #300312 0%, #1A020B 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        /* THEMES */
+        body.theme-raya {
+            --poster-burgundy: #042E1B;
+            --poster-dark-red: #02180E;
+            --poster-gold: #00FF88;
+            --poster-gold-metallic: linear-gradient(135deg, #00FF88 0%, #00B359 100%);
+            --royal-gold: linear-gradient(135deg, #A8FFD3 0%, #00FF88 50%, #008040 100%);
+            background-image: radial-gradient(circle at 50% 0%, #095432 0%, transparent 70%), radial-gradient(circle at 50% 100%, #042E1B 0%, #02180E 100%);
+        }
+
+        body.theme-christmas {
+            --poster-burgundy: #3A0007;
+            --poster-dark-red: #1F0004;
+            --poster-gold: #2ecc71;
+            --poster-gold-metallic: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --royal-gold: linear-gradient(135deg, #A3E4D7 0%, #2ecc71 50%, #196F3D 100%);
+            background-image: radial-gradient(circle at 50% 0%, #5C000B 0%, transparent 70%), radial-gradient(circle at 50% 100%, #3A0007 0%, #1F0004 100%);
+        }
+
+        body.theme-cny {
+            --poster-burgundy: #4A0000;
+            --poster-dark-red: #240000;
+            --poster-gold: #FFD700;
+            --poster-gold-metallic: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+            --royal-gold: linear-gradient(135deg, #FFF3A7 0%, #D4AF37 50%, #AA7C11 100%);
+            background-image: radial-gradient(circle at 50% 0%, #700000 0%, transparent 70%), radial-gradient(circle at 50% 100%, #4A0000 0%, #240000 100%);
+        }
+
+        body.theme-classic {
+            --poster-burgundy: #111827;
+            --poster-dark-red: #030712;
+            --poster-gold: #F59E0B;
+            --poster-gold-metallic: linear-gradient(135deg, #FBBF24 0%, #D97706 100%);
+            --royal-gold: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #B45309 100%);
+            background-image: radial-gradient(circle at 50% 0%, #1F2937 0%, transparent 70%), radial-gradient(circle at 50% 100%, #111827 0%, #030712 100%);
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            padding: 20px 15px 15px;
+            background: linear-gradient(180deg, rgba(20, 1, 8, 0.95) 0%, rgba(46, 5, 19, 0.8) 100%);
+            border-bottom: 2px solid var(--poster-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .header-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto 10px;
+        }
+
+        .notif-bell-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--poster-gold);
+            color: var(--poster-gold);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch-mode-btn {
+            background: var(--poster-gold-metallic);
+            color: #2E0513;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-logo-wrapper {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            border: 2.5px solid var(--poster-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            overflow: hidden;
+            background: #1A020B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-fallback {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            background: var(--royal-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: var(--royal-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+            line-height: 1.1;
+            margin: 3px 0;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--poster-gold);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .festive-banner {
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            display: inline-block;
+            padding: 4px 14px;
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: var(--poster-gold);
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* CUSTOMER DETAILS FORM */
+        .customer-card {
+            background: rgba(46, 5, 19, 0.85);
+            border: 1.5px solid var(--poster-gold);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            color: var(--poster-gold);
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--poster-gold);
+        }
+
+        /* SEARCH BAR */
+        .search-container {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 11px 20px 11px 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid var(--poster-gold);
+            border-radius: 30px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .search-input::placeholder {
+            color: var(--poster-gold);
+            opacity: 0.7;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--poster-gold);
+        }
+
+        /* MENU GRID & 1:1 CIRCULAR PICTURES */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        @media (min-width: 500px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 18px;
+            }
+        }
+
+        .menu-card {
+            background: linear-gradient(145deg, rgba(50, 8, 24, 0.9) 0%, rgba(25, 3, 11, 0.9) 100%);
+            border: 1.5px solid var(--card-border);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card.sold-out {
+            opacity: 0.75;
+            filter: grayscale(0.2);
+        }
+
+        .sold-out-badge {
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: var(--sold-out-red);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 30px;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        .low-stock-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--warning-orange);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .card-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-img-container {
+            width: 85px;
+            height: 85px;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--poster-gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-emoji {
+            font-size: 2.2rem;
+        }
+
+        .item-details h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .item-pcs {
+            font-size: 0.75rem;
+            color: var(--poster-gold);
+            opacity: 0.9;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 215, 0, 0.2);
+        }
+
+        .price-badge {
+            background: var(--poster-gold-metallic);
+            color: #2E0513;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            border: 1px solid var(--poster-gold);
+            overflow: hidden;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--poster-gold);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .qty-val {
+            width: 22px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* FLOATING CART */
+        .floating-cart {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2E0513 0%, #120107 100%);
+            border-top: 2px solid var(--poster-gold);
+            padding: 12px 20px;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+        }
+
+        .cart-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .cart-summary {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-items-count {
+            font-size: 0.75rem;
+            color: var(--poster-gold);
+        }
+
+        .cart-total-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            text-decoration: none;
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            z-index: 2000;
+        }
+
+        .modal-box {
+            background: linear-gradient(145deg, #2E0513 0%, #1A020B 100%);
+            border: 2px solid var(--poster-gold);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(255, 215, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--poster-gold);
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-gold {
+            background: var(--poster-gold-metallic);
+            color: #2E0513;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            margin-top: 10px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--poster-gold);
+            color: var(--poster-gold);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* SELLER TABS & CONTROLS */
+        .seller-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ddd;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--poster-gold-metallic);
+            color: #2E0513;
+            border-color: var(--poster-gold);
+        }
+
+        .seller-item-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .seller-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .seller-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-icon-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .action-icon-btn.delete { background: rgba(231, 76, 60, 0.3); color: #e74c3c; }
+        .action-icon-btn.edit { background: rgba(241, 196, 15, 0.3); color: #f1c40f; }
+
+        /* ORDERS */
+        .order-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(255, 215, 0, 0.2);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-cust-name {
+            font-weight: 700;
+            color: var(--poster-gold);
+            font-size: 0.95rem;
+        }
+
+        .order-time {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .order-item-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin: 4px 0;
+            color: #eee;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 215, 0, 0.2);
+        }
+
+        .delivery-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #FFE066;
+            font-weight: 600;
+        }
+
+        .delivery-checkbox-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2ecc71;
+            cursor: pointer;
+        }
+
+        .delivered-timestamp {
+            font-size: 0.72rem;
+            color: #2ecc71;
+            margin-top: 4px;
+            font-weight: 500;
+            display: block;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: var(--poster-gold);
+            opacity: 0.8;
+        }
+
+        .img-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--poster-gold);
+            margin-top: 5px;
+        }
+
+        .notif-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="theme-deepavali">
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-top-bar">
+            <button class="notif-bell-btn hidden" id="notif-bell-btn" onclick="openNotifModal()">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notif-count">0</span>
             </button>
-            <button onclick="toggleCart()" class="bg-amber-600 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-amber-500">
-                🛒 Cart (<span id="cart-count">0</span>)
+            <div style="flex:1;"></div>
+            <button class="switch-mode-btn" id="mode-switch-btn" onclick="toggleModeSwitch()">
+                <i class="fas fa-user-cog"></i> <span id="mode-btn-text">Seller Mode</span>
             </button>
+        </div>
+
+        <div class="header-logo-wrapper" id="header-logo-wrapper">
+            <img src="" id="header-logo-img" class="header-logo-img hidden" alt="Logo">
+            <div id="header-logo-fallback" class="logo-fallback">KK</div>
+        </div>
+
+        <h1 id="shop-title">KK HOMEMADE BISCUITS</h1>
+        <div class="subtitle" id="shop-subtitle">DELICIOUS FESTIVE TREATS</div>
+        <div class="festive-banner" id="festive-banner">
+            🪔 Happy Deepavali! Spreading Sweetness & Delight 🪔
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        
-        <!-- Product Catalog (Left 2 Columns) -->
-        <div class="md:col-span-2">
-            <!-- Admin Panel (Hidden by default) -->
-            <div id="admin-panel" class="hidden bg-amber-100 p-6 rounded-xl shadow-md mb-6 border border-amber-300 space-y-6">
-                <div>
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-amber-900">⚙️ Inventory & Stock Manager</h2>
-                        <button onclick="addNewProductPrompt()" class="bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-600">+ Add New Cookie</button>
-                    </div>
-                    <div id="admin-product-list" class="space-y-3"></div>
-                </div>
+    <!-- MAIN CONTAINER -->
+    <div class="container">
 
-                <!-- Realtime Customer Orders Section -->
-                <div class="border-t border-amber-300 pt-4">
-                    <h2 class="text-xl font-bold text-amber-900 mb-2">📋 Live Customer Orders</h2>
-                    <p class="text-xs text-amber-800 mb-3">Syncs in real-time across your phone and laptop!</p>
-                    <div id="admin-order-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        <!-- CUSTOMER VIEW -->
+        <div id="customer-view">
+            <div class="customer-card">
+                <div class="form-group">
+                    <label class="form-label" for="customer-short-name"><i class="fas fa-user-edit"></i> Customer Name (Mandatory for Order):</label>
+                    <input type="text" id="customer-short-name" class="form-input" placeholder="Enter your short name (e.g. Yuga)">
                 </div>
             </div>
 
-            <h2 class="text-2xl font-bold mb-4 text-amber-900">Our Delicious Cookies</h2>
-            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Products injected via JS -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" class="search-input" placeholder="Search biscuits or murukku...">
+            </div>
+
+            <div class="menu-grid" id="menu-grid"></div>
+        </div>
+
+        <!-- SELLER VIEW -->
+        <div id="seller-view" class="hidden">
+            <div class="seller-nav">
+                <button class="tab-btn active" id="tab-btn-stock" onclick="switchSellerTab('stock')"><i class="fas fa-boxes"></i> Stock</button>
+                <button class="tab-btn" id="tab-btn-orders" onclick="switchSellerTab('orders')"><i class="fas fa-receipt"></i> Orders</button>
+                <button class="tab-btn" id="tab-btn-staff" onclick="switchSellerTab('staff')"><i class="fas fa-users-cog"></i> Staff</button>
+                <button class="tab-btn" id="tab-btn-settings" onclick="switchSellerTab('settings')"><i class="fas fa-cog"></i> Settings</button>
+            </div>
+
+            <!-- TAB 1: MANAGE STOCK -->
+            <div id="tab-stock">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 style="color:var(--poster-gold); font-size:1rem;"><i class="fas fa-cookie-bite"></i> Stock Inventory</h3>
+                    <button class="btn-outline" onclick="attemptAddProduct()"><i class="fas fa-plus"></i> Add Biscuit</button>
+                </div>
+                <div id="seller-stock-list"></div>
+            </div>
+
+            <!-- TAB 2: ORDER HISTORY -->
+            <div id="tab-orders" class="hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 style="color:var(--poster-gold); font-size:1rem;"><i class="fas fa-list-alt"></i> Received Orders</h3>
+                    <button class="btn-outline" style="color:#e74c3c; border-color:#e74c3c;" onclick="attemptClearOrders()"><i class="fas fa-trash"></i> Clear Orders</button>
+                </div>
+                <div id="seller-orders-list"></div>
+            </div>
+
+            <!-- TAB 3: STAFF MANAGEMENT (OWNER YUGA ONLY) -->
+            <div id="tab-staff" class="hidden">
+                <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,215,0,0.3); border-radius:12px; padding:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h3 style="color:var(--poster-gold); font-size:1rem;"><i class="fas fa-user-shield"></i> Staff & Access Roles</h3>
+                        <button class="btn-outline" onclick="openAddStaffModal()"><i class="fas fa-user-plus"></i> Create Staff</button>
+                    </div>
+                    <div id="staff-list"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: STORE SETTINGS & FESTIVE THEMES -->
+            <div id="tab-settings" class="hidden">
+                <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,215,0,0.3); border-radius:12px; padding:15px;">
+                    <h3 style="color:var(--poster-gold); font-size:1rem; margin-bottom:12px;"><i class="fas fa-palette"></i> Festive Theme & Branding</h3>
+                    
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label">Select Festive Season:</label>
+                        <select id="setting-festive-theme" class="form-input" style="color:white;" onchange="changeFestiveTheme(this.value)">
+                            <option value="deepavali">🪔 Deepavali Specials (Burgundy & Gold)</option>
+                            <option value="raya">🌙 Hari Raya Aidilfitri (Emerald & Gold)</option>
+                            <option value="christmas">🎄 Christmas & New Year (Red & Green)</option>
+                            <option value="cny">🧧 Chinese New Year (Imperial Red)</option>
+                            <option value="classic">✨ Classic Homemade (Dark Midnight)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label">Shop Title:</label>
+                        <input type="text" id="setting-shop-title" class="form-input" value="KK HOMEMADE BISCUITS">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label">Shop Subtitle:</label>
+                        <input type="text" id="setting-shop-subtitle" class="form-input" value="DELICIOUS FESTIVE TREATS">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label"><i class="fas fa-camera"></i> Upload Shop Logo DP:</label>
+                        <input type="file" id="setting-logo-file" accept="image/*" class="form-input" onchange="previewLogoFile(this)">
+                        <img id="setting-logo-preview" class="img-preview hidden" alt="Logo Preview">
+                    </div>
+
+                    <button class="btn-gold" onclick="saveStoreSettings()"><i class="fas fa-save"></i> Save Settings</button>
+                </div>
             </div>
         </div>
 
-        <!-- Checkout & Cart Sidebar (Right Column) -->
-        <div class="bg-white p-6 rounded-xl shadow-md h-fit sticky top-20">
-            <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
-            <div id="cart-items" class="divide-y divide-gray-200 max-h-60 overflow-y-auto mb-4">
-                <p class="text-gray-500 text-sm">Your cart is empty.</p>
-            </div>
-            
-            <div class="border-t pt-4 mb-4">
-                <div class="flex justify-between font-bold text-lg">
-                    <span>Total:</span>
-                    <span id="cart-total">RM 0.00</span>
-                </div>
-            </div>
+        <div class="footer-note">
+            <span id="footer-festive-text">🪔 Spreading Sweetness & Delight This Deepavali! 🪔</span><br>
+            KK Homemade Biscuits • Direct WhatsApp: 601126862303
+        </div>
+    </div>
 
-            <!-- Customer Form -->
-            <div class="space-y-3 mb-4">
-                <input type="text" id="cust-name" placeholder="Your Full Name" class="w-full p-2 border rounded-lg text-sm">
-                <input type="tel" id="cust-phone" placeholder="Phone Number (e.g., 01126862303)" class="w-full p-2 border rounded-lg text-sm">
-                <textarea id="cust-address" placeholder="Delivery Address" class="w-full p-2 border rounded-lg text-sm" rows="2"></textarea>
+    <!-- FLOATING CART -->
+    <div class="floating-cart" id="floating-cart">
+        <div class="cart-inner">
+            <div class="cart-summary">
+                <span class="cart-items-count" id="cart-count">0 items selected</span>
+                <span class="cart-total-price" id="cart-total">RM 0</span>
             </div>
-
-            <button onclick="checkout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-500 transition flex items-center justify-center gap-2">
-                Checkout via WhatsApp 📱
+            <button class="whatsapp-btn" onclick="sendWhatsAppOrder()">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i>
+                <span>Order via WhatsApp</span>
             </button>
         </div>
-    </main>
+    </div>
 
-    <!-- Firebase SDKs & App Logic -->
+    <!-- SELLER LOGIN MODAL -->
+    <div class="modal-overlay hidden" id="login-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fas fa-lock"></i> Portal Login</span>
+                <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">User ID:</label>
+                <input type="text" id="login-id" class="form-input" placeholder="Enter ID (e.g. Yuga)">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Password:</label>
+                <input type="password" id="login-pass" class="form-input" placeholder="Enter Password">
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
+                <input type="checkbox" id="remember-me-check" style="width:16px; height:16px; accent-color:var(--poster-gold);">
+                <label for="remember-me-check" style="font-size:0.85rem; color:#ccc; cursor:pointer;">Save login info on this device</label>
+            </div>
+            <button class="btn-gold" onclick="performSellerLogin()">Login to Portal</button>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT PRODUCT MODAL -->
+    <div class="modal-overlay hidden" id="product-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title" id="product-modal-title"><i class="fas fa-cookie"></i> Add New Biscuit</span>
+                <button class="close-btn" onclick="closeProductModal()">&times;</button>
+            </div>
+            <input type="hidden" id="prod-id">
+            
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Biscuit / Murukku Name:</label>
+                <input type="text" id="prod-name" class="form-input" placeholder="e.g. Pineapple Tart">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Price (RM):</label>
+                    <input type="number" id="prod-price" class="form-input" placeholder="32">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Pcs / Size:</label>
+                    <input type="text" id="prod-pcs" class="form-input" placeholder="50 pcs">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Available Stock Quantity:</label>
+                <input type="number" id="prod-stock" class="form-input" placeholder="10">
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label"><i class="fas fa-image"></i> Product Photo (Device Upload):</label>
+                <input type="file" id="prod-photo-file" accept="image/*" class="form-input" onchange="previewProdPhoto(this)">
+                <img id="prod-photo-preview" class="img-preview hidden" alt="Product Preview">
+            </div>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label class="form-label">Or Emoji Icon:</label>
+                <input type="text" id="prod-icon" class="form-input" placeholder="🍍">
+            </div>
+
+            <button class="btn-gold" type="button" onclick="saveProduct()">Save Biscuit Item</button>
+        </div>
+    </div>
+
+    <!-- REQUEST PERMISSION MODAL -->
+    <div class="modal-overlay hidden" id="request-perm-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title" style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> Access Restricted</span>
+                <button class="close-btn" onclick="closeRequestPermModal()">&times;</button>
+            </div>
+            <p style="font-size:0.85rem; color:#eee; margin-bottom:12px;" id="perm-request-desc">
+                You do not have permission for this action. Would you like to send an instant access request to Owner Yuga?
+            </p>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label class="form-label">Request Note (Optional):</label>
+                <input type="text" id="perm-request-note" class="form-input" placeholder="Reason for request...">
+            </div>
+            <button class="btn-gold" onclick="sendPermissionRequest()">Send Request to Yuga</button>
+        </div>
+    </div>
+
+    <!-- OWNER NOTIFICATION MODAL -->
+    <div class="modal-overlay hidden" id="notif-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fas fa-bell"></i> Owner Notifications</span>
+                <button class="close-btn" onclick="closeNotifModal()">&times;</button>
+            </div>
+            <div id="notif-list-container"></div>
+            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="clearNotifs()">Clear All Alerts</button>
+        </div>
+    </div>
+
+    <!-- ADD STAFF MODAL -->
+    <div class="modal-overlay hidden" id="staff-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fas fa-user-plus"></i> Create Staff Account</span>
+                <button class="close-btn" onclick="closeAddStaffModal()">&times;</button>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Staff User ID:</label>
+                <input type="text" id="staff-new-id" class="form-input" placeholder="e.g. Staff1">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Password:</label>
+                <input type="password" id="staff-new-pass" class="form-input" placeholder="Set Password">
+            </div>
+            <div style="margin-bottom:15px;">
+                <label class="form-label" style="display:block; margin-bottom:8px;">Permissions Allowed:</label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px;">
+                    <input type="checkbox" id="perm-edit-prod" checked> Can Add/Edit Products
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px;">
+                    <input type="checkbox" id="perm-manage-stock" checked> Can Manage Stock Counts
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
+                    <input type="checkbox" id="perm-manage-orders" checked> Can Deliver/Clear Orders
+                </label>
+            </div>
+            <button class="btn-gold" onclick="saveNewStaff()">Create Staff Account</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, setDoc, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDgcBDdJaGkEBS1ihJASDAayNHWgrJ-UN8",
@@ -97,304 +1029,794 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let products = [];
-        let orders = [];
-        let cart = [];
-        let isAdminOpen = false;
-
+        // DEFAULT DATA
         const defaultProducts = [
-            { id: "1", name: "Biskut Semperit", price: 25.00, stock: 15, image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400" },
-            { id: "2", name: "Nastar Pineapple Tart", price: 32.00, stock: 10, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400" },
-            { id: "3", name: "Almond London", price: 30.00, stock: 8, image: "https://images.unsplash.com/photo-1548848221-0c2e68f3a6a3?w=400" },
-            { id: "4", name: "Cornflakes Madu", price: 22.00, stock: 20, image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=400" }
+            { id: 'prod_1', name: "Jam Tart", pcs: "50 pcs", price: 32, stock: 15, icon: "🍍", image: "", inStock: true },
+            { id: 'prod_2', name: "Almond London", pcs: "50 pcs", price: 35, stock: 2, icon: "🍫", image: "", inStock: true },
+            { id: 'prod_3', name: "Semperit (Custart)", pcs: "50 pcs", price: 25, stock: 10, icon: "🌼", image: "", inStock: true },
+            { id: 'prod_4', name: "Kacang", pcs: "50 pcs", price: 27, stock: 8, icon: "🥜", image: "", inStock: true },
+            { id: 'prod_5', name: "Coconut", pcs: "50 pcs", price: 25, stock: 0, icon: "🥥", image: "", inStock: false },
+            { id: 'prod_6', name: "Corn Flakes", pcs: "50 pcs", price: 22, stock: 12, icon: "🌽", image: "", inStock: true },
+            { id: 'prod_7', name: "Sesame (Bijan)", pcs: "50 pcs", price: 20, stock: 5, icon: "🥯", image: "", inStock: true },
+            { id: 'prod_8', name: "Nestum", pcs: "50 pcs", price: 20, stock: 14, icon: "🌾", image: "", inStock: true },
+            { id: 'prod_9', name: "Ais Cream", pcs: "50 pcs", price: 32, stock: 6, icon: "🍦", image: "", inStock: true },
+            { id: 'prod_10', name: "Suji Balls", pcs: "50 pcs", price: 28, stock: 9, icon: "🧆", image: "", inStock: true },
+            { id: 'prod_11', name: "Achi Murukku", pcs: "35 pcs", price: 35, stock: 11, icon: "🥠", image: "", inStock: true },
+            { id: 'prod_12', name: "Mixer", pcs: "B.Kecil", price: 12, stock: 20, icon: "🍿", image: "", inStock: true },
+            { id: 'prod_13', name: "Ghee Ball", pcs: "10 pcs", price: 10, stock: 15, icon: "🟡", image: "", inStock: true },
+            { id: 'prod_14', name: "Murukku", pcs: "15 pcs", price: 13, stock: 18, icon: "🌀", image: "", inStock: true },
+            { id: 'prod_15', name: "Murukku", pcs: "45 pcs", price: 30, stock: 7, icon: "🌀", image: "", inStock: true },
+            { id: 'prod_16', name: "Murukku (Tin)", pcs: "1 tin", price: 132, stock: 4, icon: "🥫", image: "", inStock: true }
         ];
 
-        onSnapshot(collection(db, "products"), async (snapshot) => {
-            if (snapshot.empty) {
-                for (let p of defaultProducts) {
-                    await setDoc(doc(db, "products", p.id), p);
-                }
-            } else {
-                products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderProducts();
-                if (isAdminOpen) renderAdminProducts();
-            }
-        });
+        // GLOBAL APP STATE
+        let products = [];
+        let orders = [];
+        let notifications = JSON.parse(localStorage.getItem('kk_notifs')) || [];
+        let staffAccounts = JSON.parse(localStorage.getItem('kk_staff')) || [];
+        let storeSettings = JSON.parse(localStorage.getItem('kk_store_settings')) || {
+            title: "KK HOMEMADE BISCUITS",
+            subtitle: "DELICIOUS FESTIVE TREATS",
+            logo: "",
+            theme: "deepavali"
+        };
 
-        onSnapshot(collection(db, "orders"), (snapshot) => {
-            orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
-            if (isAdminOpen) renderAdminOrders();
-        });
+        let cart = {};
+        let currentUser = JSON.parse(localStorage.getItem('kk_session')) || null;
+        let currentRole = currentUser ? 'seller' : 'customer';
+        let tempProdPhotoBase64 = "";
+        let tempLogoBase64 = "";
+        let pendingActionContext = "";
 
-        window.renderProducts = function() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = '';
-            products.forEach(p => {
-                list.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 flex flex-col justify-between">
-                        <div>
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-36 object-cover rounded-lg mb-3 bg-gray-100" onerror="this.src='https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400'">
-                            <h3 class="font-bold text-lg">${p.name}</h3>
-                            <p class="text-amber-700 font-semibold">RM ${Number(p.price).toFixed(2)}</p>
-                            <p class="text-xs text-gray-500 mt-1">Stock left: ${p.stock}</p>
-                        </div>
-                        <button onclick="addToCart('${p.id}')" ${p.stock <= 0 ? 'disabled' : ''} 
-                            class="mt-4 w-full bg-amber-700 text-white py-2 rounded-lg text-sm font-semibold hover:bg-amber-600 disabled:bg-gray-300">
-                            ${p.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                        </button>
-                    </div>
-                `;
-            });
-        }
+        // INIT FIREBASE REALTIME LISTENERS
+        window.addEventListener('DOMContentLoaded', () => {
+            applyStoreSettings();
 
-        window.toggleAdmin = function() {
-            const pin = prompt("Enter Admin PIN:");
-            if (pin === "1234") {
-                isAdminOpen = !isAdminOpen;
-                const panel = document.getElementById('admin-panel');
-                if (isAdminOpen) {
-                    panel.classList.remove('hidden');
-                    renderAdminProducts();
-                    renderAdminOrders();
-                    document.getElementById('admin-btn').innerText = "❌ Close Admin";
+            // Realtime Products Listener
+            onSnapshot(collection(db, "products"), async (snapshot) => {
+                if (snapshot.empty) {
+                    for (let p of defaultProducts) {
+                        await setDoc(doc(db, "products", p.id), p);
+                    }
                 } else {
-                    panel.classList.add('hidden');
-                    document.getElementById('admin-btn').innerText = "⚙️ Admin Login";
+                    products = snapshot.docs.map(doc => ({ ...doc.data() }));
+                    checkAndGenerateStockAlerts();
+                    renderCustomerMenu(document.getElementById('search-input')?.value || "");
+                    if (currentRole === 'seller') renderSellerStockList();
                 }
-            } else if (pin !== null) {
-                alert("Incorrect PIN!");
+            });
+
+            // Realtime Orders Listener
+            onSnapshot(collection(db, "orders"), (snapshot) => {
+                orders = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+                if (currentRole === 'seller') renderSellerOrdersList();
+            });
+
+            if (currentUser) {
+                applySellerSessionView();
+            }
+        });
+
+        // FESTIVE THEMES & BRANDING
+        window.changeFestiveTheme = function(theme) {
+            document.body.className = `theme-${theme}`;
+            const banner = document.getElementById('festive-banner');
+            const footer = document.getElementById('footer-festive-text');
+
+            if (theme === 'raya') {
+                banner.innerText = "🌙 Selamat Hari Raya Aidilfitri! Maaf Zahir & Batin 🌙";
+                footer.innerText = "🌙 Selamat Hari Raya Aidilfitri from KK Homemade Biscuits! 🌙";
+            } else if (theme === 'christmas') {
+                banner.innerText = "🎄 Merry Christmas & Happy New Year! Festive Joy 🎄";
+                footer.innerText = "🎄 Wishing You Joy & Happiness This Festive Season! 🎄";
+            } else if (theme === 'cny') {
+                banner.innerText = "🧧 Gong Xi Fa Cai! Wishing You Wealth & Good Fortune 🧧";
+                footer.innerText = "🧧 Happy Chinese New Year from KK Homemade Biscuits! 🧧";
+            } else if (theme === 'classic') {
+                banner.innerText = "✨ Freshly Baked Homemade Biscuits & Murukku ✨";
+                footer.innerText = "✨ Quality Homemade Treats Baked With Passion ♡ ✨";
+            } else {
+                banner.innerText = "🪔 Happy Deepavali! Spreading Sweetness & Delight ♡ 🪔";
+                footer.innerText = "🪔 Spreading Sweetness & Delight This Deepavali! 🪔";
+            }
+        };
+
+        function applyStoreSettings() {
+            document.getElementById('shop-title').innerText = storeSettings.title;
+            document.getElementById('shop-subtitle').innerText = storeSettings.subtitle;
+            document.getElementById('setting-festive-theme').value = storeSettings.theme || 'deepavali';
+            changeFestiveTheme(storeSettings.theme || 'deepavali');
+
+            const logoImg = document.getElementById('header-logo-img');
+            const logoFallback = document.getElementById('header-logo-fallback');
+
+            if (storeSettings.logo) {
+                logoImg.src = storeSettings.logo;
+                logoImg.classList.remove('hidden');
+                logoFallback.classList.add('hidden');
+            } else {
+                logoImg.classList.add('hidden');
+                logoFallback.classList.remove('hidden');
             }
         }
 
-        window.renderAdminProducts = function() {
-            const adminList = document.getElementById('admin-product-list');
-            adminList.innerHTML = '<h3 class="font-bold text-sm text-amber-900 mb-2">Edit Cookies, Stock & Upload Photo from Device</h3>';
+        // LOW STOCK & NOTIFICATION SYSTEM
+        function checkAndGenerateStockAlerts() {
             products.forEach(p => {
-                adminList.innerHTML += `
-                    <div class="bg-white p-3 rounded-lg shadow-sm border flex flex-col gap-2 text-sm">
-                        <div class="flex gap-2 items-center">
-                            <input type="text" value="${p.name}" id="name-${p.id}" class="border p-1 rounded w-1/3">
-                            <input type="number" value="${p.price}" id="price-${p.id}" class="border p-1 rounded w-20">
-                            <input type="number" value="${p.stock}" id="stock-${p.id}" class="border p-1 rounded w-20">
+                if (p.stock <= 2 && p.stock > 0) {
+                    addNotif(`🚨 Low Stock Warning: ${p.name} has only ${p.stock} left!`, 'stock');
+                } else if (p.stock === 0) {
+                    addNotif(`❌ Out of Stock Alert: ${p.name} is completely sold out!`, 'stock');
+                }
+            });
+            updateNotifUI();
+        }
+
+        function addNotif(msg, type) {
+            if (!notifications.some(n => n.msg === msg)) {
+                notifications.unshift({ id: Date.now(), msg: msg, type: type, date: new Date().toLocaleTimeString() });
+                try {
+                    localStorage.setItem('kk_notifs', JSON.stringify(notifications));
+                } catch (e) {
+                    console.error("Storage full: ", e);
+                }
+            }
+        }
+
+        function updateNotifUI() {
+            document.getElementById('notif-count').innerText = notifications.length;
+            if (currentUser && currentUser.isOwner) {
+                document.getElementById('notif-bell-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('notif-bell-btn').classList.add('hidden');
+            }
+        }
+
+        window.openNotifModal = function() {
+            const list = document.getElementById('notif-list-container');
+            list.innerHTML = "";
+
+            if (notifications.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:#aaa; padding:15px;">No unread alerts.</div>`;
+            } else {
+                notifications.forEach(n => {
+                    const item = document.createElement('div');
+                    item.className = 'notif-item';
+                    item.innerHTML = `<div style="color:var(--poster-gold); font-weight:600;">${n.msg}</div><div style="font-size:0.7rem; color:#aaa;">${n.date}</div>`;
+                    list.appendChild(item);
+                });
+            }
+            document.getElementById('notif-modal').classList.remove('hidden');
+        };
+
+        window.closeNotifModal = function() { document.getElementById('notif-modal').classList.add('hidden'); };
+        window.clearNotifs = function() {
+            notifications = [];
+            localStorage.setItem('kk_notifs', JSON.stringify(notifications));
+            updateNotifUI();
+            closeNotifModal();
+        };
+
+        // RENDER CUSTOMER MENU
+        window.renderCustomerMenu = function(filterText = "") {
+            const grid = document.getElementById('menu-grid');
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                p.pcs.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            filtered.forEach(product => {
+                const qty = cart[product.id] || 0;
+                const isSoldOut = !product.inStock || product.stock <= 0;
+                const isLowStock = product.stock > 0 && product.stock <= 2;
+
+                const card = document.createElement('div');
+                card.className = `menu-card ${isSoldOut ? 'sold-out' : ''}`;
+                
+                let imageContent = product.image 
+                    ? `<img src="${product.image}" class="item-img" alt="${product.name}">`
+                    : `<span class="item-emoji">${product.icon || '🍪'}</span>`;
+
+                card.innerHTML = `
+                    ${isSoldOut ? '<div class="sold-out-badge">SOLD OUT</div>' : ''}
+                    ${isLowStock ? `<div class="low-stock-badge">ONLY ${product.stock} LEFT!</div>` : ''}
+                    <div class="card-top">
+                        <div class="item-img-container">
+                            ${imageContent}
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-2 items-center justify-between">
-                            <div class="flex items-center gap-2 w-full">
-                                <span class="text-xs text-gray-500">Photo:</span>
-                                <input type="file" id="file-${p.id}" accept="image/*" class="text-xs w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200">
-                            </div>
-                            <div class="flex gap-2 w-full sm:w-auto justify-end">
-                                <button onclick="updateProduct('${p.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-500">Save</button>
-                                <button onclick="deleteProduct('${p.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-500">Delete</button>
-                            </div>
+                        <div class="item-details">
+                            <h3>${product.name}</h3>
+                            <div class="item-pcs">(${product.pcs}) • ${product.stock} left</div>
+                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <div class="price-badge">RM ${product.price}</div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty('${product.id}', -1)" ${isSoldOut ? 'disabled' : ''}>-</button>
+                            <span class="qty-val">${qty}</span>
+                            <button class="qty-btn" onclick="updateQty('${product.id}', 1)" ${isSoldOut || qty >= product.stock ? 'disabled' : ''}>+</button>
                         </div>
                     </div>
                 `;
+                grid.appendChild(card);
             });
-        }
+        };
 
-        window.renderAdminOrders = function() {
-            const orderList = document.getElementById('admin-order-list');
-            orderList.innerHTML = '';
-            if (orders.length === 0) {
-                orderList.innerHTML = '<p class="text-sm text-gray-500 italic">No orders received yet.</p>';
+        window.updateQty = function(id, change) {
+            const product = products.find(p => String(p.id) === String(id));
+            if (!product || !product.inStock || product.stock <= 0) return;
+
+            const current = cart[id] || 0;
+            const next = current + change;
+
+            if (next > product.stock) {
+                alert(`Sorry, only ${product.stock} units available in stock!`);
                 return;
             }
 
-            orders.forEach(o => {
-                let itemsSummary = o.items.map(i => `${i.name} (${i.qty}x)`).join(', ');
-                orderList.innerHTML += `
-                    <div class="bg-white p-3 rounded-lg shadow-sm border text-sm mb-2 space-y-1">
-                        <div class="flex justify-between font-bold text-amber-900">
-                            <span>${o.orderId} - ${o.name} (${o.phone})</span>
-                            <span class="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold">${o.status}</span>
-                        </div>
-                        <p class="text-xs text-gray-600">📍 <b>Address:</b> ${o.address}</p>
-                        <p class="text-xs text-gray-600">🍪 <b>Items:</b> ${itemsSummary}</p>
-                        <p class="text-xs font-semibold text-amber-700">💰 Total: RM ${o.total.toFixed(2)} | 🕒 ${o.date}</p>
-                        <div class="flex gap-2 pt-2 items-center justify-between border-t mt-1">
-                            <select onchange="updateOrderStatus('${o.docId}', this.value)" class="border p-1 rounded text-xs bg-gray-50 font-medium">
-                                <option value="Pending Payment" ${o.status === 'Pending Payment' ? 'selected' : ''}>Pending Payment</option>
-                                <option value="Paid & Preparing" ${o.status === 'Paid & Preparing' ? 'selected' : ''}>Paid & Preparing</option>
-                                <option value="Shipped / Completed" ${o.status === 'Shipped / Completed' ? 'selected' : ''}>Shipped / Completed</option>
-                                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                            </select>
-                            <button onclick="deleteOrder('${o.docId}')" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete Record</button>
+            if (next <= 0) delete cart[id];
+            else cart[id] = next;
+
+            renderCustomerMenu(document.getElementById('search-input').value);
+            updateCartSummary();
+        };
+
+        function updateCartSummary() {
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            for (const [id, qty] of Object.entries(cart)) {
+                const prod = products.find(p => String(p.id) === String(id));
+                if (prod) {
+                    totalItems += qty;
+                    totalPrice += prod.price * qty;
+                }
+            }
+
+            document.getElementById('cart-count').innerText = `${totalItems} items selected`;
+            document.getElementById('cart-total').innerText = `RM ${totalPrice}`;
+        }
+
+        // SAFE CONCURRENT WHATSAPP ORDER (TRANSACTION-SAFE STOCK DEDUCTION)
+        window.sendWhatsAppOrder = async function() {
+            const custNameInput = document.getElementById('customer-short-name');
+            const custName = custNameInput.value.trim();
+
+            if (!custName) {
+                alert("Please enter your short name before placing the order!");
+                custNameInput.focus();
+                return;
+            }
+
+            const entries = Object.entries(cart);
+            if (entries.length === 0) {
+                alert("Please select at least one biscuit before ordering!");
+                return;
+            }
+
+            // TRIGGER WHATSAPP POPUP IMMEDIATELY TO AVOID MOBILE POPUP BLOCKERS
+            const now = new Date();
+            const orderDate = now.toLocaleDateString();
+            const orderTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            let orderItems = [];
+            let total = 0;
+
+            let whatsappText = `🪔 KK HOMEMADE BISCUITS ORDER 🪔\n\n`;
+            whatsappText += `Name: ${custName}\n`;
+            whatsappText += `------------------------------------\n`;
+            whatsappText += `Date: ${orderDate}\n`;
+            whatsappText += `Time: ${orderTime}\n`;
+            whatsappText += `------------------------------------\n`;
+            whatsappText += `ORDERED:\n\n`;
+
+            entries.forEach(([id, qty], index) => {
+                const item = products.find(p => String(p.id) === String(id));
+                if (item) {
+                    const subtotal = item.price * qty;
+                    total += subtotal;
+                    orderItems.push({ name: item.name, pcs: item.pcs, qty: qty, price: item.price, subtotal: subtotal });
+
+                    whatsappText += `• ${item.name} (${item.pcs})\n`;
+                    whatsappText += `Qty: ${qty} x RM ${item.price.toFixed(2)} = RM ${subtotal.toFixed(2)}\n`;
+                    
+                    if (index < entries.length - 1) {
+                        whatsappText += `\n`;
+                    }
+                }
+            });
+
+            whatsappText += `\n------------------------------------\n`;
+            whatsappText += `TOTAL AMOUNT: RM ${total.toFixed(2)}\n`;
+            whatsappText += `------------------------------------`;
+
+            // Open WhatsApp right away with exact number 601126862303
+            const encoded = encodeURIComponent(whatsappText);
+            window.open(`https://wa.me/601126862303?text=${encoded}`, '_blank');
+
+            // SECURE REAL-TIME TRANSACTION FOR CONCURRENT STOCK DEDUCTION IN FIREBASE
+            try {
+                for (let [id, qty] of entries) {
+                    const productRef = doc(db, "products", String(id));
+                    await runTransaction(db, async (transaction) => {
+                        const prodDoc = await transaction.get(productRef);
+                        if (!prodDoc.exists()) {
+                            throw new Error("Product does not exist!");
+                        }
+                        const currentStock = prodDoc.data().stock;
+                        const newStock = Math.max(0, currentStock - qty);
+                        transaction.update(productRef, { 
+                            stock: newStock,
+                            inStock: newStock > 0
+                        });
+                    });
+                }
+
+                // Save order record to Firebase database
+                const orderRecord = {
+                    id: Date.now(),
+                    customerName: custName,
+                    date: orderDate,
+                    time: orderTime,
+                    items: orderItems,
+                    totalAmount: total,
+                    delivered: false,
+                    deliveredAt: null
+                };
+
+                await addDoc(collection(db, "orders"), orderRecord);
+
+                cart = {};
+                updateCartSummary();
+                renderCustomerMenu();
+            } catch (err) {
+                console.error("Stock deduction transaction failed: ", err);
+                alert("Order placed via WhatsApp, but some stock counts might have updated concurrently. Please check inventory.");
+            }
+        };
+
+        // LOGIN & LOGIN ROLES
+        window.toggleModeSwitch = function() {
+            if (currentRole === 'customer') {
+                document.getElementById('login-modal').classList.remove('hidden');
+            } else {
+                currentRole = 'customer';
+                currentUser = null;
+                localStorage.removeItem('kk_session');
+                document.getElementById('mode-btn-text').innerText = 'Seller Mode';
+                document.getElementById('seller-view').classList.add('hidden');
+                document.getElementById('customer-view').classList.remove('hidden');
+                document.getElementById('floating-cart').classList.remove('hidden');
+                updateNotifUI();
+            }
+        };
+
+        window.closeLoginModal = function() { document.getElementById('login-modal').classList.add('hidden'); };
+
+        window.performSellerLogin = function() {
+            const id = document.getElementById('login-id').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            const remember = document.getElementById('remember-me-check').checked;
+
+            if (id === 'Yuga' && pass === '1234') {
+                currentUser = { id: 'Yuga', isOwner: true, perms: { editProd: true, manageStock: true, manageOrders: true } };
+            } else {
+                const staff = staffAccounts.find(s => s.id === id && s.pass === pass);
+                if (staff) {
+                    currentUser = { id: staff.id, isOwner: false, perms: staff.perms };
+                } else {
+                    alert('Invalid ID or Password! Please try again.');
+                    return;
+                }
+            }
+
+            if (remember) {
+                localStorage.setItem('kk_session', JSON.stringify(currentUser));
+            }
+
+            closeLoginModal();
+            document.getElementById('login-id').value = '';
+            document.getElementById('login-pass').value = '';
+
+            applySellerSessionView();
+        };
+
+        function applySellerSessionView() {
+            currentRole = 'seller';
+            document.getElementById('mode-btn-text').innerText = `Logout (${currentUser.id})`;
+            document.getElementById('customer-view').classList.add('hidden');
+            document.getElementById('floating-cart').classList.add('hidden');
+            document.getElementById('seller-view').classList.remove('hidden');
+
+            if (currentUser.isOwner) {
+                document.getElementById('tab-btn-staff').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-btn-staff').classList.add('hidden');
+            }
+
+            updateNotifUI();
+            renderSellerStockList();
+            renderSellerOrdersList();
+            renderStaffList();
+        }
+
+        // RESTRICTED ACTION CHECKS & PERMISSION REQUESTS
+        function hasPermission(permType) {
+            if (!currentUser) return false;
+            if (currentUser.isOwner) return true;
+            return currentUser.perms && currentUser.perms[permType];
+        }
+
+        function promptPermissionRequest(actionDesc) {
+            pendingActionContext = actionDesc;
+            document.getElementById('perm-request-desc').innerText = `You do not have permission to ${actionDesc}. Would you like to request permission from Owner Yuga?`;
+            document.getElementById('request-perm-modal').classList.remove('hidden');
+        }
+
+        window.closeRequestPermModal = function() { document.getElementById('request-perm-modal').classList.add('hidden'); };
+
+        window.sendPermissionRequest = function() {
+            const note = document.getElementById('perm-request-note').value.trim();
+            addNotif(`🔑 Permission Request from ${currentUser.id}: ${pendingActionContext} (${note || 'No note'})`, 'perm');
+            alert("Request sent successfully to Mr Yuga!");
+            closeRequestPermModal();
+            document.getElementById('perm-request-note').value = "";
+        };
+
+        // SELLER TABS
+        window.switchSellerTab = function(tabName) {
+            document.querySelectorAll('.seller-nav .tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+
+            document.getElementById('tab-stock').classList.add('hidden');
+            document.getElementById('tab-orders').classList.add('hidden');
+            document.getElementById('tab-staff').classList.add('hidden');
+            document.getElementById('tab-settings').classList.add('hidden');
+
+            if (tabName === 'stock') {
+                document.getElementById('tab-stock').classList.remove('hidden');
+                renderSellerStockList();
+            } else if (tabName === 'orders') {
+                document.getElementById('tab-orders').classList.remove('hidden');
+                renderSellerOrdersList();
+            } else if (tabName === 'staff') {
+                document.getElementById('tab-staff').classList.remove('hidden');
+                renderStaffList();
+            } else if (tabName === 'settings') {
+                document.getElementById('tab-settings').classList.remove('hidden');
+            }
+        };
+
+        // RENDER SELLER STOCK
+        function renderSellerStockList() {
+            const container = document.getElementById('seller-stock-list');
+            if (!container) return;
+            container.innerHTML = "";
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'seller-item-card';
+
+                let thumb = p.image 
+                    ? `<img src="${p.image}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid var(--poster-gold)">`
+                    : `<span style="font-size:1.5rem;">${p.icon || '🍪'}</span>`;
+
+                card.innerHTML = `
+                    <div class="seller-item-info">
+                        ${thumb}
+                        <div>
+                            <div style="font-weight:700; color:white;">${p.name} <span style="font-size:0.75rem; color:var(--poster-gold);">(${p.pcs})</span></div>
+                            <div style="font-size:0.8rem; color:#ccc;">RM ${p.price} • Stock: <strong>${p.stock}</strong> • ${p.inStock && p.stock > 0 ? '<span style="color:#2ecc71;">In Stock</span>' : '<span style="color:#e74c3c;">Sold Out</span>'}</div>
                         </div>
                     </div>
+                    <div class="seller-actions">
+                        <button class="btn-outline" style="padding:4px 8px; font-size:0.72rem;" onclick="attemptStockToggle('${p.id}')">
+                            ${p.inStock && p.stock > 0 ? 'Mark Sold Out' : 'Mark In Stock'}
+                        </button>
+                        <button class="action-icon-btn edit" onclick="attemptEditProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="action-icon-btn delete" onclick="attemptDeleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
                 `;
+                container.appendChild(card);
             });
         }
 
-        window.updateProduct = async function(id) {
-            const name = document.getElementById(`name-${id}`).value;
-            const price = parseFloat(document.getElementById(`price-${id}`).value);
-            const stock = parseInt(document.getElementById(`stock-${id}`).value);
-            const fileInput = document.getElementById(`file-${id}`);
-
-            let currentProduct = products.find(p => p.id === id);
-            let imageUrl = currentProduct.image;
-
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    imageUrl = e.target.result;
-                    await updateDoc(doc(db, "products", id), { name, price, stock, image: imageUrl });
-                    alert("Product, stock & photo updated successfully!");
-                };
-                reader.readAsDataURL(file);
-            } else {
-                await updateDoc(doc(db, "products", id), { name, price, stock, image: imageUrl });
-                alert("Product & stock updated successfully!");
+        window.attemptStockToggle = async function(id) {
+            if (!hasPermission('manageStock')) { promptPermissionRequest('Toggle Stock Status'); return; }
+            const prod = products.find(p => String(p.id) === String(id));
+            if (prod) {
+                const newInStock = !prod.inStock;
+                const newStock = newInStock && prod.stock === 0 ? 10 : prod.stock;
+                await updateDoc(doc(db, "products", String(id)), { inStock: newInStock, stock: newStock });
             }
+        };
+
+        window.attemptAddProduct = function() {
+            if (!hasPermission('editProd')) { promptPermissionRequest('Add New Products'); return; }
+            openAddProductModal();
+        };
+
+        window.attemptEditProduct = function(id) {
+            if (!hasPermission('editProd')) { promptPermissionRequest('Edit Products'); return; }
+            editProduct(id);
+        };
+
+        window.attemptDeleteProduct = function(id) {
+            if (!hasPermission('editProd')) { promptPermissionRequest('Delete Products'); return; }
+            deleteProduct(id);
+        };
+
+        function openAddProductModal() {
+            document.getElementById('product-modal-title').innerText = "Add New Biscuit";
+            document.getElementById('prod-id').value = "";
+            document.getElementById('prod-name').value = "";
+            document.getElementById('prod-price').value = "";
+            document.getElementById('prod-pcs').value = "";
+            document.getElementById('prod-stock').value = "10";
+            document.getElementById('prod-icon').value = "🍪";
+            document.getElementById('prod-photo-file').value = "";
+            document.getElementById('prod-photo-preview').classList.add('hidden');
+            tempProdPhotoBase64 = "";
+
+            document.getElementById('product-modal').classList.remove('hidden');
         }
+
+        function editProduct(id) {
+            const prod = products.find(p => String(p.id) === String(id));
+            if (!prod) return;
+
+            document.getElementById('product-modal-title').innerText = "Edit Biscuit";
+            document.getElementById('prod-id').value = prod.id;
+            document.getElementById('prod-name').value = prod.name;
+            document.getElementById('prod-price').value = prod.price;
+            document.getElementById('prod-pcs').value = prod.pcs;
+            document.getElementById('prod-stock').value = prod.stock;
+            document.getElementById('prod-icon').value = prod.icon || "🍪";
+            document.getElementById('prod-photo-file').value = "";
+            
+            tempProdPhotoBase64 = prod.image || "";
+            const preview = document.getElementById('prod-photo-preview');
+            if (prod.image) {
+                preview.src = prod.image;
+                preview.classList.remove('hidden');
+            } else {
+                preview.classList.add('hidden');
+            }
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        window.closeProductModal = function() { 
+            tempProdPhotoBase64 = "";
+            document.getElementById('product-modal').classList.add('hidden'); 
+        };
+
+        window.previewProdPhoto = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempProdPhotoBase64 = e.target.result;
+                    const preview = document.getElementById('prod-photo-preview');
+                    preview.src = tempProdPhotoBase64;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.saveProduct = async function() {
+            try {
+                const id = document.getElementById('prod-id').value;
+                const name = document.getElementById('prod-name').value.trim();
+                const price = parseFloat(document.getElementById('prod-price').value);
+                const pcs = document.getElementById('prod-pcs').value.trim();
+                const stock = parseInt(document.getElementById('prod-stock').value);
+                const icon = document.getElementById('prod-icon').value.trim();
+
+                if (!name || isNaN(price) || !pcs || isNaN(stock)) {
+                    alert("Please fill in Name, Price, Pcs/Size, and Stock Quantity properly!");
+                    return;
+                }
+
+                if (id) {
+                    const prod = products.find(p => String(p.id) === String(id));
+                    const updatedData = {
+                        name: name,
+                        price: price,
+                        pcs: pcs,
+                        stock: stock,
+                        inStock: stock > 0,
+                        icon: icon || "🍪"
+                    };
+                    if (tempProdPhotoBase64 !== "") {
+                        updatedData.image = tempProdPhotoBase64;
+                    }
+                    await updateDoc(doc(db, "products", String(id)), updatedData);
+                } else {
+                    const newId = 'prod_' + Date.now();
+                    const newProd = {
+                        id: newId,
+                        name: name,
+                        price: price,
+                        pcs: pcs,
+                        stock: stock,
+                        icon: icon || "🍪",
+                        image: tempProdPhotoBase64 || "",
+                        inStock: stock > 0
+                    };
+                    await setDoc(doc(db, "products", newId), newProd);
+                }
+
+                closeProductModal();
+                alert("Biscuit saved successfully!");
+            } catch (err) {
+                alert("Error saving biscuit: " + err.message);
+                console.error(err);
+            }
+        };
 
         window.deleteProduct = async function(id) {
-            if (confirm("Are you sure you want to delete this cookie?")) {
-                await deleteDoc(doc(db, "products", id));
+            if (confirm("Are you sure you want to delete this biscuit item?")) {
+                await deleteDoc(doc(db, "products", String(id)));
             }
-        }
+        };
 
-        window.addNewProductPrompt = async function() {
-            const name = prompt("Cookie Name:");
-            if (!name) return;
-            const price = parseFloat(prompt("Price (RM):", "25.00")) || 25.00;
-            const stock = parseInt(prompt("Stock Quantity:", "10")) || 10;
+        // ORDERS MANAGEMENT
+        function renderSellerOrdersList() {
+            const container = document.getElementById('seller-orders-list');
+            if (!container) return;
+            container.innerHTML = "";
 
-            const newId = Date.now().toString();
-            const newProduct = { id: newId, name, price, stock, image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400" };
-            
-            await setDoc(doc(db, "products", newId), newProduct);
-        }
-
-        window.addToCart = function(productId) {
-            const product = products.find(p => p.id === productId);
-            const cartItem = cart.find(item => item.id === productId);
-
-            if (cartItem) {
-                if (cartItem.qty < product.stock) {
-                    cartItem.qty++;
-                } else {
-                    alert("Not enough stock available!");
-                }
-            } else {
-                cart.push({ ...product, qty: 1 });
-            }
-            renderCart();
-        }
-
-        window.renderCart = function() {
-            const container = document.getElementById('cart-items');
-            const countEl = document.getElementById('cart-count');
-            const totalEl = document.getElementById('cart-total');
-            
-            container.innerHTML = '';
-            if (cart.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-sm">Your cart is empty.</p>';
-                countEl.innerText = '0';
-                totalEl.innerText = 'RM 0.00';
+            if (orders.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#aaa; padding:20px;">No orders received yet.</div>`;
                 return;
             }
 
-            let total = 0;
-            let totalCount = 0;
+            orders.forEach(ord => {
+                const card = document.createElement('div');
+                card.className = 'order-card';
 
-            cart.forEach(item => {
-                total += item.price * item.qty;
-                totalCount += item.qty;
-                container.innerHTML += `
-                    <div class="py-2 flex justify-between items-center text-sm">
+                let itemsHtml = ord.items.map(i => `
+                    <div class="order-item-line">
+                        <span>• ${i.name} (${i.pcs}) x ${i.qty}</span>
+                        <span>RM ${i.subtotal}</span>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-cust-name"><i class="fas fa-user"></i> ${ord.customerName}</span>
+                        <span class="order-time"><i class="far fa-clock"></i> ${ord.date} ${ord.time}</span>
+                    </div>
+                    <div>${itemsHtml}</div>
+                    <div class="order-footer">
                         <div>
-                            <p class="font-semibold">${item.name}</p>
-                            <p class="text-gray-500">RM ${Number(item.price).toFixed(2)} x ${item.qty}</p>
+                            <label class="delivery-checkbox-label">
+                                <input type="checkbox" ${ord.delivered ? 'checked' : ''} onchange="attemptToggleOrderDelivered('${ord.docId}', this.checked)">
+                                <span>${ord.delivered ? 'Order Delivered ✓' : 'Mark as Delivered'}</span>
+                            </label>
+                            ${ord.delivered && ord.deliveredAt ? `<span class="delivered-timestamp"><i class="fas fa-check-circle"></i> Delivered: ${ord.deliveredAt}</span>` : ''}
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 text-xs font-bold">Remove</button>
+                        <span style="font-weight:800; color:var(--poster-gold); font-size:1.1rem;">Total: RM ${ord.totalAmount}</span>
                     </div>
                 `;
+                container.appendChild(card);
             });
-
-            countEl.innerText = totalCount;
-            totalEl.innerText = `RM ${total.toFixed(2)}`;
         }
 
-        window.removeFromCart = function(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            renderCart();
-        }
+        window.attemptToggleOrderDelivered = async function(docId, isChecked) {
+            if (!hasPermission('manageOrders')) { promptPermissionRequest('Update Order Delivery Status'); renderSellerOrdersList(); return; }
+            const deliveredAt = isChecked ? `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : null;
+            await updateDoc(doc(db, "orders", docId), { delivered: isChecked, deliveredAt: deliveredAt });
+        };
 
-        window.checkout = async function() {
-            const name = document.getElementById('cust-name').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const address = document.getElementById('cust-address').value.trim();
-
-            if (!name || !phone || !address) {
-                alert("Please fill in your name, phone number, and delivery address!");
-                return;
-            }
-
-            if (cart.length === 0) {
-                alert("Your cart is empty!");
-                return;
-            }
-
-            let total = 0;
-            cart.forEach(item => total += item.price * item.qty);
-
-            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
-            const newOrder = {
-                orderId: orderId,
-                name: name,
-                phone: phone,
-                address: address,
-                items: [...cart],
-                total: total,
-                status: 'Pending Payment',
-                date: new Date().toLocaleString()
-            };
-
-            // 1. OPEN WHATSAPP IMMEDIATELY (Bypasses mobile popup blockers)
-            let message = `🪔 *NEW DEEPAVALI ORDER (${orderId})* 🪔\n\n`;
-            message += `*Name:* ${name}\n`;
-            message += `*Phone:* ${phone}\n`;
-            message += `*Address:* ${address}\n\n`;
-            message += `*Order Details:*\n`;
-
-            cart.forEach(item => {
-                let subtotal = item.price * item.qty;
-                message += `- ${item.name} (${item.qty}x) = RM ${subtotal.toFixed(2)}\n`;
-            });
-
-            message += `\n*Total Amount:* RM ${total.toFixed(2)}\n\n`;
-            message += `Please send me the payment instructions!`;
-
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/601126862303?text=${encodedMessage}`, '_blank');
-
-            // 2. SAVE TO FIREBASE & DEDUCT STOCK IN THE BACKGROUND
-            await addDoc(collection(db, "orders"), newOrder);
-
-            for (let item of cart) {
-                const currentProd = products.find(p => p.id === item.id);
-                if (currentProd) {
-                    const newStock = Math.max(0, currentProd.stock - item.qty);
-                    await updateDoc(doc(db, "products", item.id), { stock: newStock });
+        window.attemptClearOrders = async function() {
+            if (!hasPermission('manageOrders')) { promptPermissionRequest('Clear Order History'); return; }
+            if (confirm("Are you sure you want to clear all order history?")) {
+                for (let ord of orders) {
+                    await deleteDoc(doc(db, "orders", ord.docId));
                 }
             }
+        };
 
-            cart = [];
-            renderCart();
-        }
+        // STAFF MANAGEMENT
+        function renderStaffList() {
+            const container = document.getElementById('staff-list');
+            if (!container) return;
+            container.innerHTML = "";
 
-        window.updateOrderStatus = async function(docId, status) {
-            await updateDoc(doc(db, "orders", docId), { status: status });
-        }
-
-        window.deleteOrder = async function(docId) {
-            if (confirm("Are you sure you want to delete this order record?")) {
-                await deleteDoc(doc(db, "orders", docId));
+            if (staffAccounts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#aaa; padding:10px;">No staff accounts created yet.</div>`;
+                return;
             }
+
+            staffAccounts.forEach((st, index) => {
+                const card = document.createElement('div');
+                card.style = "background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;";
+                card.innerHTML = `
+                    <div>
+                        <strong style="color:var(--poster-gold);">${st.id}</strong>
+                        <div style="font-size:0.75rem; color:#ccc;">
+                            Edit Prod: ${st.perms.editProd ? '✓' : '✗'} | Stock: ${st.perms.manageStock ? '✓' : '✗'} | Orders: ${st.perms.manageOrders ? '✓' : '✗'}
+                        </div>
+                    </div>
+                    <button class="action-icon-btn delete" onclick="deleteStaff(${index})"><i class="fas fa-trash"></i></button>
+                `;
+                container.appendChild(card);
+            });
         }
+
+        window.openAddStaffModal = function() { document.getElementById('staff-modal').classList.remove('hidden'); };
+        window.closeAddStaffModal = function() { document.getElementById('staff-modal').classList.add('hidden'); };
+
+        window.saveNewStaff = function() {
+            const id = document.getElementById('staff-new-id').value.trim();
+            const pass = document.getElementById('staff-new-pass').value.trim();
+
+            if (!id || !pass) { alert("Please fill in Staff ID and Password!"); return; }
+
+            const newStaff = {
+                id: id,
+                pass: pass,
+                perms: {
+                    editProd: document.getElementById('perm-edit-prod').checked,
+                    manageStock: document.getElementById('perm-manage-stock').checked,
+                    manageOrders: document.getElementById('perm-manage-orders').checked
+                }
+            };
+
+            staffAccounts.push(newStaff);
+            localStorage.setItem('kk_staff', JSON.stringify(staffAccounts));
+            closeAddStaffModal();
+            renderStaffList();
+            alert(`Staff Account '${id}' created successfully!`);
+        };
+
+        window.deleteStaff = function(index) {
+            if (confirm("Delete this staff account?")) {
+                staffAccounts.splice(index, 1);
+                localStorage.setItem('kk_staff', JSON.stringify(staffAccounts));
+                renderStaffList();
+            }
+        };
+
+        // STORE SETTINGS
+        window.previewLogoFile = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempLogoBase64 = e.target.result;
+                    const preview = document.getElementById('setting-logo-preview');
+                    preview.src = tempLogoBase64;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.saveStoreSettings = function() {
+            const title = document.getElementById('setting-shop-title').value.trim();
+            const subtitle = document.getElementById('setting-shop-subtitle').value.trim();
+            const theme = document.getElementById('setting-festive-theme').value;
+
+            storeSettings.title = title || "KK HOMEMADE BISCUITS";
+            storeSettings.subtitle = subtitle || "DELICIOUS FESTIVE TREATS";
+            storeSettings.theme = theme;
+            
+            if (tempLogoBase64) storeSettings.logo = tempLogoBase64;
+
+            localStorage.setItem('kk_store_settings', JSON.stringify(storeSettings));
+            applyStoreSettings();
+            alert("Store Settings & Theme updated successfully!");
+        };
+
+        // SEARCH EVENT LISTENER
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            renderCustomerMenu(e.target.value);
+        });
     </script>
 </body>
 </html>
