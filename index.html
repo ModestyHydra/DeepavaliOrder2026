@@ -9,7 +9,7 @@
 </head>
 <body id="body-bg" class="bg-amber-50 text-gray-800 transition-colors duration-300 min-h-screen">
 
-    <!-- Slim & Compact Header (Scrolls naturally, NOT fixed) -->
+    <!-- Slim & Compact Header -->
     <header id="header-container" class="bg-amber-700 bg-cover bg-center py-2 px-4 shadow-md z-40 flex flex-col items-center justify-center max-w-6xl mx-auto rounded-b-xl transition-all duration-300 text-center">
         
         <!-- Top Utility Bar: Admin & Cart Buttons -->
@@ -142,7 +142,7 @@
             </div>
         </div>
 
-        <!-- Checkout & Cart Sidebar (Completely hidden when Admin is open) -->
+        <!-- Checkout & Cart Sidebar -->
         <div id="cart-sidebar" class="bg-white text-gray-800 p-6 rounded-xl shadow-md h-fit sticky top-6">
             <h2 class="text-xl font-bold mb-4 text-amber-900">Your Order</h2>
             <div id="cart-items" class="divide-y divide-gray-200 max-h-60 overflow-y-auto mb-4">
@@ -527,11 +527,8 @@
             const sortOption = document.getElementById('order-sort-select') ? document.getElementById('order-sort-select').value : 'newest';
             
             let sortedOrders = [...orders].sort((a, b) => {
-                let timeA = Number(a.timestamp) || new Date(a.date).getTime() || 0;
-                let timeB = Number(b.timestamp) || new Date(b.date).getTime() || 0;
-                
-                if (isNaN(timeA)) timeA = 0;
-                if (isNaN(timeB)) timeB = 0;
+                let timeA = a.timestamp ? Number(a.timestamp) : 1;
+                let timeB = b.timestamp ? Number(b.timestamp) : 1;
 
                 if (sortOption === 'oldest') {
                     return timeA - timeB; // Oldest to Newest (0-9)
